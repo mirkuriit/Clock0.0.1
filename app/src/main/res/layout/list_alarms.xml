@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="true">
+
+    <TextView
+        android:id="@+id/textAlarmListTime"
+        style="@style/styleHeader1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="00:00"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Switch
+        android:id="@+id/switchAlarmList"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/textAlarmListTime"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textAlarmListTime"
+        app:layout_constraintTop_toTopOf="@+id/textAlarmListTime" />
+
+    <TextView
+        android:id="@+id/textAlarmListDescription"
+        style="@style/styleDescription1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/textAlarmListTime"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginVertical="5dp"
+        android:text="some description of alarm"/>
+
+    <ImageButton
+        android:id="@+id/buttonAlarmListExtendParams"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="15dp"
+        android:background="#FFFFFF"
+        android:src="@drawable/ic_dropdown_arrow"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textAlarmListDescription" />
+
+    <TextView
+        android:id="@+id/textAlarmListDates"
+        style="@style/styleDescription1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@+id/buttonAlarmListExtendParams"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textAlarmListDescription"
+        android:layout_margin="10dp"
+        android:text="md, td, wd, th, fr, st, sn"/>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/constraintAlarmListExtended"
+        app:layout_constraintTop_toBottomOf="@id/buttonAlarmListExtendParams"
+        android:animateLayoutChanges="true">
+        <CheckBox
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/styleDescription1"
+            android:text="@string/alarm_list_repeat"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="5dp"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/checkBoxAlarmListRepeat"/>
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/checkBoxAlarmListRepeat"
+            android:id="@+id/scrollViewChips"
+            android:layout_margin="10dp">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/linearLayoutChips">
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/monday_short"
+                    android:id="@+id/chipAlarmListMonday"
+                    android:singleLine="true"
+                    android:checkable="true"/>
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tuesday_short"
+                    android:id="@+id/chipAlarmListTuesday"
+                    android:singleLine="true"
+                    android:checkable="true"/>
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/wednesday_short"
+                    android:id="@+id/chipAlarmListWednesday"
+                    android:singleLine="true"
+                    android:checkable="true"/>
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/thursday_short"
+                    android:id="@+id/chipAlarmListThursday"
+                    android:singleLine="true"
+                    android:checkable="true"/>
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/friday_short"
+                    android:id="@+id/chipAlarmListFriday"
+                    android:singleLine="true"
+                    android:checkable="true"/>
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/saturday_short"
+                    android:id="@+id/chipAlarmListSaturday"
+                    android:singleLine="true"
+                    android:checkable="true"/>
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sunday_short"
+                    android:id="@+id/chipAlarmListSunday"
+                    android:singleLine="true"
+                    android:checkable="true"/>
+            </LinearLayout>
+        </HorizontalScrollView>
+
+
+        <Button
+            android:id="@+id/buttonAlarmListSound"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:backgroundTint="@color/white"
+            android:drawableLeft="@drawable/ic_sound"
+            android:text="some sound"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@+id/checkBoxAlarmListVibration"
+            app:layout_constraintEnd_toStartOf="@+id/checkBoxAlarmListVibration"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/checkBoxAlarmListVibration"
+            android:textAllCaps="false"/>
+
+        <CheckBox
+            android:id="@+id/checkBoxAlarmListVibration"
+            style="@style/styleDescription1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/vibration_signal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/scrollViewChips"
+            android:layout_margin="10dp"/>
+
+        <EditText
+            android:id="@+id/editAlarmListDescription"
+            style="@style/styleDescription1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/alarm_description"
+            app:layout_constraintTop_toBottomOf="@id/checkBoxAlarmListVibration"
+            android:layout_margin="10dp"
+            android:maxLength="300"/>
+
+        <Button
+            android:id="@+id/buttonAlarmListDelete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:backgroundTint="@color/white"
+            android:drawableLeft="@drawable/ic_delete"
+            android:text="@string/delete"
+            android:textColor="@color/black"
+            android:textAllCaps="false"
+            app:layout_constraintTop_toBottomOf="@id/editAlarmListDescription" />
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

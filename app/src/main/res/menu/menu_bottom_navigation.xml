@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menuItemAlarm"
+        android:icon="@drawable/ic_alarm"
+        android:title="@string/bottom_nav_title_alarm"/>
+    <item
+        android:id="@+id/menuItemStopwatch"
+        android:icon="@drawable/ic_stopwatch"
+        android:title="@string/bottom_nav_title_stopwatch"/>
+    <item
+        android:id="@+id/menuItemTimer"
+        android:icon="@drawable/ic_timer"
+        android:title="@string/bottom_nav_title_timer"/>
+</menu>

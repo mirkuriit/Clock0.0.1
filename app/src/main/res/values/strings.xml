@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Clock0.0.1</string>
+    <string name="bottom_nav_title_timer">Timer</string>
+    <string name="bottom_nav_title_stopwatch">Stopwatch</string>
+    <string name="bottom_nav_title_alarm">Alarm</string>
+    <string name="alarm_list_repeat">Repeat</string>
+    <string name="monday_short">mo</string>
+    <string name="tuesday_short">tu</string>
+    <string name="wednesday_short">we</string>
+    <string name="thursday_short">th</string>
+    <string name="friday_short">fr</string>
+    <string name="saturday_short">sa</string>
+    <string name="sunday_short">su</string>
+    <string name="vibration_signal">Vibration</string>
+    <string name="alarm_description">alarm description</string>
+    <string name="delete">delete</string>
+    <string name="no_alarms">There aren\'t any alarms yet...</string>
+    <string name="every_day">every day</string>
+    <string name="today">today</string>
+    <string name="tomorrow">tomorrow</string>
+</resources>
