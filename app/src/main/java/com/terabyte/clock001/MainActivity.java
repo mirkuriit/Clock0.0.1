@@ -12,6 +12,9 @@ import android.view.MenuItem;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
+
+//*Kinita boldak
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
