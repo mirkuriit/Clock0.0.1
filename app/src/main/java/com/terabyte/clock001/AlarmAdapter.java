@@ -1,6 +1,7 @@
 package com.terabyte.clock001;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -58,6 +59,11 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 alarm.isEnabled = b;
                 AlarmDatabaseManager.updateAlarm(AlarmDatabaseClient.getInstance(inflater.getContext()).getAppDatabase(), alarm);
+
+                Intent intentService = new Intent(inflater.getContext(), AlarmForegroundService.class);
+                intentService.putExtra(Const.INTENT_KEY_HOUR, alarm.hour);
+                intentService.putExtra(Const.INTENT_KEY_MINUTE, alarm.minute);
+                intentService.putExtra(Const.INTENT_KEY_ALARM_ID, alarm.id);
             }
         });
 
