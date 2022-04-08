@@ -9,6 +9,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Clock001">
+        <service
+            android:name=".AlarmForegroundService"
+            android:enabled="true"
+            android:exported="true"></service>
+
+        <activity
+            android:name=".AlarmRingActivity"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

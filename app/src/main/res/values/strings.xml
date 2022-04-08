@@ -18,4 +18,7 @@
     <string name="every_day">every day</string>
     <string name="today">today</string>
     <string name="tomorrow">tomorrow</string>
+    <string name="alarm">Alarm</string>
+    <string name="delay">delay</string>
+    <string name="dismiss">dismiss</string>
 </resources>
