@@ -1,7 +1,12 @@
 package com.terabyte.clock001;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+
+import java.io.Serializable;
 
 /**
  * It's simple entity class for Room Database.
@@ -15,14 +20,15 @@ public class Alarm {
     public long id;
     public int hour, minute;
     public String description;
-    public boolean isEnabled, isRepeat, isVibration;
+    public boolean isEnabled, isRepeat, isVibration, isPuzzle;
 
-    public Alarm(int hour, int minute, String description, boolean isEnabled, boolean isRepeat, boolean isVibration) {
+    public Alarm(int hour, int minute, String description, boolean isEnabled, boolean isRepeat, boolean isVibration, boolean isPuzzle) {
         this.hour = hour;
         this.minute = minute;
         this.description = description;
         this.isEnabled = isEnabled;
         this.isRepeat = isRepeat;
         this.isVibration = isVibration;
+        this.isPuzzle = isPuzzle;
     }
 }

@@ -21,4 +21,7 @@
     <string name="alarm">Alarm</string>
     <string name="delay">delay</string>
     <string name="dismiss">dismiss</string>
+    <string name="solve_puzzle">solve the puzzle</string>
+    <string name="puzzle">Puzzle</string>
+    <string name="choose_puzzle_type">Choose the type of puzzle</string>
 </resources>

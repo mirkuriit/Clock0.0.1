@@ -5,9 +5,16 @@ package com.terabyte.clock001;
  */
 
 public class Const {
+    public static final String TAG = "myDebug";
+
     //in Room database we have to add name of db. But It doesn't care how to name it
     public static final String ALARM_DB_NAME = "alarmDatabase";
-    public static final String INTENT_KEY_HOUR = "intentKeyHour";
-    public static final String INTENT_KEY_MINUTE = "intentKeyMinute";
+    public static final String DATA_KEY_HOUR = "dataKeyHour";
+    public static final String DATA_KEY_MINUTE = "dataKeyMinute";
+
     public static final String INTENT_KEY_ALARM_ID = "intentKeyAlarmId";
+
+
+    public static final String ALARM_NOTIFICATION_CHANNEL_ID = "alarmNotificationChannelId";
+    public static final int ALARM_NOTIFICATION_ID = 1;
 }

@@ -169,6 +169,25 @@
             app:layout_constraintTop_toBottomOf="@id/checkBoxAlarmListVibration"
             android:layout_margin="10dp"
             android:maxLength="300"/>
+        <CheckBox
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/puzzle"
+            android:id="@+id/checkBoxAlarmListPuzzle"
+            app:layout_constraintTop_toBottomOf="@id/editAlarmListDescription"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_puzzle_type"
+            android:layout_margin="10dp"
+            android:drawableLeft="@drawable/ic_puzzle"
+            android:backgroundTint="@color/white"
+            android:textColor="@color/black"
+            android:textAllCaps="false"
+            app:layout_constraintTop_toBottomOf="@id/checkBoxAlarmListPuzzle"
+            android:id="@+id/buttonAlarmListChoosePuzzleType"/>
+
 
         <Button
             android:id="@+id/buttonAlarmListDelete"
@@ -180,7 +199,7 @@
             android:text="@string/delete"
             android:textColor="@color/black"
             android:textAllCaps="false"
-            app:layout_constraintTop_toBottomOf="@id/editAlarmListDescription" />
+            app:layout_constraintTop_toBottomOf="@id/buttonAlarmListChoosePuzzleType" />
 
 
 

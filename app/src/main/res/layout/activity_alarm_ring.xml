@@ -5,6 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".AlarmRingActivity">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/imageAlarmRingBackground"
+        android:src="@drawable/alarm_ring_default_background2"
+        android:scaleType="centerCrop"/>
+
 
     <TextView
         android:id="@+id/textAlarmRingTime"
@@ -28,13 +35,25 @@
         app:layout_constraintStart_toStartOf="@+id/textAlarmRingTime"
         app:layout_constraintTop_toBottomOf="@+id/textAlarmRingTime" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintAlarmConundrum"
+    <TextView
+        android:id="@+id/textAlarmRingDescription"
+        style="@style/styleDescription2"
+        android:textSize="20sp"
+        android:gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         app:layout_constraintTop_toBottomOf="@+id/textAlarmRingHeader"
-        android:layout_marginTop="10dp"/>
+        android:text="there is some description of our alarm"/>
+
+    <Button
+        android:id="@+id/buttonAlarmSolvePuzzle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/solve_puzzle"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
         android:id="@+id/linearLayout"

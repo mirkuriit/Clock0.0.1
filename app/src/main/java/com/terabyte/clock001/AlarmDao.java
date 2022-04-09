@@ -27,5 +27,8 @@ public interface AlarmDao {
 
     @Query("select * from alarm")
     List<Alarm> getAll();
+
+    @Query("select * from alarm where id = :alarmId")
+    Alarm getAlarmById(long alarmId);
 }
 

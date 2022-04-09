@@ -2,6 +2,8 @@ package com.terabyte.clock001;
 
 import android.os.AsyncTask;
 
+import java.util.List;
+
 /**
  * I created this class to easily work with database: delete, update and create objects in Room Database
  * Actually, I've just realize methods of Dao interface.
@@ -15,6 +17,26 @@ import android.os.AsyncTask;
  */
 
 public class AlarmDatabaseManager {
+
+    public static void createAlarm(AlarmDatabase db, Alarm alarm, PostExecuteCode code) {
+        class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Void> {
+            @Override
+            protected Void doInBackground(AlarmDatabase... alarmDatabases) {
+                AlarmDatabase db = alarmDatabases[0];
+                db.alarmDao().insert(alarm);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void unused) {
+                super.onPostExecute(unused);
+                code.doInPostExecute();
+            }
+        }
+
+        DatabaseTask task = new DatabaseTask();
+        task.execute(db);
+    }
 
     public static void updateAlarm(AlarmDatabase db, Alarm alarm) {
         class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Void> {
@@ -57,6 +79,25 @@ public class AlarmDatabaseManager {
             protected void onPostExecute(Void unused) {
                 super.onPostExecute(unused);
                 code.doInPostExecute();
+            }
+        }
+
+        DatabaseTask task = new DatabaseTask();
+        task.execute(db);
+    }
+
+    public static void getAllAlarms(AlarmDatabase db, PostExecuteCode code) {
+        class DatabaseTask extends AsyncTask<AlarmDatabase, Void, List<Alarm>> {
+            @Override
+            protected List<Alarm> doInBackground(AlarmDatabase... alarmDatabases) {
+                AlarmDatabase db = alarmDatabases[0];
+                return db.alarmDao().getAll();
+            }
+
+            @Override
+            protected void onPostExecute(List<Alarm> alarms) {
+                super.onPostExecute(alarms);
+                code.doInPostExecuteWhenWeGotAllAlarms(alarms);
             }
         }
 
@@ -131,6 +172,92 @@ public class AlarmDatabaseManager {
             protected void onPostExecute(AlarmRepeating alarmRepeating) {
                 super.onPostExecute(alarmRepeating);
                 code.doInPostExecuteWhenWeGotAlarmRepeating(alarmRepeating);
+            }
+        }
+
+        DatabaseTask task = new DatabaseTask();
+        task.execute(db);
+    }
+
+    public static void getAlarmById(AlarmDatabase db, long alarmId, PostExecuteCode code) {
+        class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Alarm> {
+            @Override
+            protected Alarm doInBackground(AlarmDatabase... alarmDatabases) {
+                AlarmDatabase db = alarmDatabases[0];
+                return db.alarmDao().getAlarmById(alarmId);
+            }
+
+            @Override
+            protected void onPostExecute(Alarm alarm) {
+                super.onPostExecute(alarm);
+                code.doInPostExecuteWhenWeGotAlarm(alarm);
+            }
+        }
+
+        DatabaseTask task = new DatabaseTask();
+        task.execute(db);
+    }
+
+    public static void createAlarmPuzzle(AlarmDatabase db, AlarmPuzzle alarmPuzzle) {
+        class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Void> {
+            @Override
+            protected Void doInBackground(AlarmDatabase... alarmDatabases) {
+                AlarmDatabase db = alarmDatabases[0];
+                db.alarmPuzzleDao().insert(alarmPuzzle);
+                return null;
+            }
+        }
+
+        DatabaseTask task = new DatabaseTask();
+        task.execute(db);
+    }
+
+    public static void updateAlarmPuzzle(AlarmDatabase db, AlarmPuzzle alarmPuzzle, PostExecuteCode code) {
+        class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Void> {
+            @Override
+            protected Void doInBackground(AlarmDatabase... alarmDatabases) {
+                AlarmDatabase db = alarmDatabases[0];
+                db.alarmPuzzleDao().update(alarmPuzzle);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void unused) {
+                super.onPostExecute(unused);
+                code.doInPostExecute();
+            }
+        }
+
+        DatabaseTask task = new DatabaseTask();
+        task.execute(db);
+    }
+
+    public static void deleteAlarmPuzzle(AlarmDatabase db, AlarmPuzzle alarmPuzzle) {
+        class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Void> {
+            @Override
+            protected Void doInBackground(AlarmDatabase... alarmDatabases) {
+                AlarmDatabase db = alarmDatabases[0];
+                db.alarmPuzzleDao().delete(alarmPuzzle);
+                return null;
+            }
+        }
+
+        DatabaseTask task = new DatabaseTask();
+        task.execute(db);
+    }
+
+    public static void getAlarmPuzzleByParentAlarmId(AlarmDatabase db, long parentAlarmId, PostExecuteCode code) {
+        class DatabaseTask extends AsyncTask<AlarmDatabase, Void, AlarmPuzzle> {
+            @Override
+            protected AlarmPuzzle doInBackground(AlarmDatabase... alarmDatabases) {
+                AlarmDatabase db = alarmDatabases[0];
+                return db.alarmPuzzleDao().getByParentAlarmId(parentAlarmId);
+            }
+
+            @Override
+            protected void onPostExecute(AlarmPuzzle alarmPuzzle) {
+                super.onPostExecute(alarmPuzzle);
+                code.doInPostExecuteWhenWeGotAlarmPuzzle(alarmPuzzle);
             }
         }
 

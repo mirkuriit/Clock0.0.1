@@ -19,7 +19,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.WorkInfo;
 
 import com.google.android.material.chip.Chip;
 
@@ -36,8 +39,9 @@ import java.util.List;
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder> {
     private LayoutInflater inflater;
     private List<Alarm> alarms;
+    private Fragment fragment;
 
-    public AlarmAdapter(Context context, List<Alarm> alarms) {
+    public AlarmAdapter(Context context, Fragment fragment, List<Alarm> alarms) {
         this.alarms = alarms;
         inflater = LayoutInflater.from(context);
     }
@@ -60,10 +64,22 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
                 alarm.isEnabled = b;
                 AlarmDatabaseManager.updateAlarm(AlarmDatabaseClient.getInstance(inflater.getContext()).getAppDatabase(), alarm);
 
-                Intent intentService = new Intent(inflater.getContext(), AlarmForegroundService.class);
-                intentService.putExtra(Const.INTENT_KEY_HOUR, alarm.hour);
-                intentService.putExtra(Const.INTENT_KEY_MINUTE, alarm.minute);
-                intentService.putExtra(Const.INTENT_KEY_ALARM_ID, alarm.id);
+                // TODO: 08.04.2022 here we also start or stop workManager
+                if(b) {
+                    AlarmWorkLauncher.startAlarmWorker(inflater.getContext(), fragment, alarm.id, alarm.hour, alarm.minute, new Observer<WorkInfo>() {
+                        @Override
+                        public void onChanged(WorkInfo workInfo) {
+                            if(workInfo.getState().isFinished()) {
+                                Intent intent = new Intent(inflater.getContext(), AlarmRingActivity.class);
+                                intent.putExtra(Const.INTENT_KEY_ALARM_ID, alarm.id);
+                                inflater.getContext().startActivity(intent);
+                            }
+                        }
+                    });
+                }
+                else {
+                    AlarmWorkLauncher.stopAlarmWorker(inflater.getContext(), String.valueOf(alarm.id));
+                }
             }
         });
 
@@ -113,6 +129,37 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
             }
         });
 
+        holder.checkBoxAlarmListPuzzle.setChecked(alarm.isPuzzle);
+        holder.checkBoxAlarmListPuzzle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b) {
+                    alarm.isPuzzle = true;
+                    AlarmDatabaseManager.createAlarmPuzzle(AlarmDatabaseClient.getInstance(inflater.getContext()).getAppDatabase(), new AlarmPuzzle(alarm.id, 0));
+                    AlarmDatabaseManager.updateAlarm(AlarmDatabaseClient.getInstance(inflater.getContext()).getAppDatabase(), alarm);
+                    holder.buttonAlarmListChoosePuzzleType.setVisibility(View.VISIBLE);
+                }
+                else {
+                    alarm.isPuzzle = false;
+                    AlarmDatabaseManager.getAlarmPuzzleByParentAlarmId(AlarmDatabaseClient.getInstance(inflater.getContext()).getAppDatabase(), alarm.id, new PostExecuteCode() {
+                        @Override
+                        public void doInPostExecuteWhenWeGotAlarmPuzzle(AlarmPuzzle alarmPuzzle) {
+                            AlarmDatabaseManager.deleteAlarmPuzzle(AlarmDatabaseClient.getInstance(inflater.getContext()).getAppDatabase(), alarmPuzzle);
+                        }
+                    });
+                    AlarmDatabaseManager.updateAlarm(AlarmDatabaseClient.getInstance(inflater.getContext()).getAppDatabase(), alarm);
+
+                    holder.buttonAlarmListChoosePuzzleType.setVisibility(View.GONE);
+                }
+            }
+        });
+        if(alarm.isPuzzle) {
+            holder.buttonAlarmListChoosePuzzleType.setVisibility(View.VISIBLE);
+        }
+        else {
+            holder.buttonAlarmListChoosePuzzleType.setVisibility(View.GONE);
+        }
+
         holder.editAlarmListDescription.setText(alarm.description);
         holder.editAlarmListDescription.addTextChangedListener(new TextWatcher() {
             @Override
@@ -153,17 +200,6 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
         });
 
         holder.buttonAlarmListDelete.setOnClickListener(new View.OnClickListener() {
-
-
-
-
-
-
-
-
-
-
-
             @Override
             public void onClick(View view) {
                 //delete alarm
@@ -181,39 +217,21 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
 
                         alarms.remove(alarm);
                         AlarmAdapter.super.notifyDataSetChanged();
+                        // TODO: 08.04.2022 here we stop work manager
+                        AlarmWorkLauncher.stopAlarmWorker(inflater.getContext(), String.valueOf(alarm.id));
                     }
                 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             }
         });
 
         holder.constraintAlarmListExtended.setVisibility(View.GONE);
+
+        holder.buttonAlarmListChoosePuzzleType.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
 
         if(alarm.isRepeat) {
             AlarmDatabaseManager.getAlarmRepeatingByParentAlarmId(AlarmDatabaseClient.getInstance(inflater.getContext()).getAppDatabase(), alarm.id, new PostExecuteCode() {
@@ -296,10 +314,10 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
         public Switch switchAlarmList;
         public ImageButton buttonAlarmListExtendParams;
         public ConstraintLayout constraintAlarmListExtended;
-        CheckBox checkBoxAlarmListRepeat, checkBoxAlarmListVibration;
+        CheckBox checkBoxAlarmListRepeat, checkBoxAlarmListVibration, checkBoxAlarmListPuzzle;
         HorizontalScrollView scrollViewChips;
         LinearLayout linearLayoutChips;
-        Button buttonAlarmListSound, buttonAlarmListDelete;
+        Button buttonAlarmListSound, buttonAlarmListDelete, buttonAlarmListChoosePuzzleType;
         EditText editAlarmListDescription;
 
         public AlarmHolder(@NonNull View itemView) {
@@ -311,10 +329,12 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
             buttonAlarmListExtendParams = itemView.findViewById(R.id.buttonAlarmListExtendParams);
             checkBoxAlarmListRepeat = itemView.findViewById(R.id.checkBoxAlarmListRepeat);
             checkBoxAlarmListVibration = itemView.findViewById(R.id.checkBoxAlarmListVibration);
+            checkBoxAlarmListPuzzle = itemView.findViewById(R.id.checkBoxAlarmListPuzzle);
             scrollViewChips = itemView.findViewById(R.id.scrollViewChips);
             linearLayoutChips = itemView.findViewById(R.id.linearLayoutChips);
             buttonAlarmListSound = itemView.findViewById(R.id.buttonAlarmListSound);
             buttonAlarmListDelete = itemView.findViewById(R.id.buttonAlarmListDelete);
+            buttonAlarmListChoosePuzzleType = itemView.findViewById(R.id.buttonAlarmListChoosePuzzleType);
             editAlarmListDescription = itemView.findViewById(R.id.editAlarmListDescription);
             constraintAlarmListExtended = itemView.findViewById(R.id.constraintAlarmListExtended);
         }
