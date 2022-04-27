@@ -17,7 +17,7 @@ import java.util.List;
 @Dao
 public interface AlarmDao {
     @Insert
-    void insert(Alarm alarm);
+    long insert(Alarm alarm);
 
     @Update
     void update(Alarm alarm);

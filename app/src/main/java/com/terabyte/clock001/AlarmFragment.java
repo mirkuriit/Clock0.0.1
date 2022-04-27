@@ -44,14 +44,6 @@ public class AlarmFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-
-
-
-
-
-
-
-
                 TimePickerDialog.OnTimeSetListener listener = new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int i, int i1) {
@@ -62,68 +54,31 @@ public class AlarmFragment extends Fragment {
 
                         AlarmDatabaseManager.createAlarm(AlarmDatabaseClient.getInstance(getContext()).getAppDatabase(), alarm, new PostExecuteCode() {
                             @Override
-                            public void doInPostExecute() {
+                            public void doInPostExecuteWhenWeGotIdOfCreatedAlarm(Long createdAlarmId) {
                                 //here we start work manager and fill recyclerView again
                                 fillRecyclerView(recyclerAlarms);
-                                AlarmWorkLauncher.startAlarmWorker(getContext(), AlarmFragment.this, alarm.id, alarm.hour, alarm.minute, new Observer<WorkInfo>() {
-                                    @Override
-                                    public void onChanged(WorkInfo workInfo) {
-                                        if(workInfo.getState().isFinished()) {
-                                            Intent intent = new Intent(getContext(), AlarmRingActivity.class);
-                                            intent.putExtra(Const.INTENT_KEY_ALARM_ID, alarm.id);
-                                            startActivity(intent);
-                                        }
-                                    }
-                                });
+                                AlarmWorkLauncher.startAlarmWorker(getContext(), AlarmFragment.this, createdAlarmId, alarm.hour, alarm.minute, AlarmWorkLauncher.getAlarmWorkerObserver(getContext(), createdAlarmId));
                             }
                         });
-
-
                     }
                 };
 
-
-
-
-
-
-
-
-                TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), listener, Calendar.getInstance().getTime().getHours(), Calendar.getInstance().getTime().getMinutes(), true);
+                TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), listener, Calendar.getInstance().get(Calendar.HOUR), Calendar.getInstance().get(Calendar.MINUTE), true);
                 timePickerDialog.show();
             }
         });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         return view;
     }
 
-    private void fillRecyclerView(RecyclerView recyclerAlarms) {
+    private void fillRecyclerView (RecyclerView recyclerAlarms){
         AlarmDatabaseManager.getAllAlarms(AlarmDatabaseClient.getInstance(getContext()).getAppDatabase(), new PostExecuteCode() {
             @Override
             public void doInPostExecuteWhenWeGotAllAlarms(List<Alarm> alarms) {
-                if(alarms.size()>0) {
+                if (alarms.size() > 0) {
                     recyclerAlarms.setAdapter(new AlarmAdapter(getContext(), AlarmFragment.this, alarms));
                     recyclerAlarms.setLayoutManager(new LinearLayoutManager(getContext()));
-                }
-                else {
+                } else {
                     // TODO: 30.03.2022 show text "no alarms here yet"
                 }
             }

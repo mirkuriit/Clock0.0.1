@@ -15,7 +15,7 @@ import androidx.work.WorkerParameters;
  * So, after some hours I decided to use WorkManager engine.
  * This class extends Worker is like our task that we need compile in another thread.
  * This class has doWork() method. In this method we have another thread and here we just wait some time.
- * And after waiting we just return succes! We don't care, what Result.success() means, we realize about Worker finishing in special listener.
+ * And after waiting we just return success! We don't care, what Result.success() means, we realize about Worker finishing in special listener.
  * This listener's name is WorkManager.getInstance(context).getWorkInfoByIdLiveData(..) and its location is AlarmWorkLauncher class
  * And finally in this listener (not here 'cause there is another thread) we start AlarmRingActivity!
  */
@@ -28,12 +28,10 @@ public class AlarmWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        int hour = getInputData().getInt(Const.DATA_KEY_HOUR, -1);
-        int minute = getInputData().getInt(Const.DATA_KEY_MINUTE, -1);
-        if(hour == -1 | minute==-1) {
+        long mills = getInputData().getLong(Const.DATA_KEY_MILLS, -1);
+        if(mills == -1) {
             return Result.failure();
         }
-        long mills = DateManager.getMillsForAlarm(hour, minute);
         try {
             Thread.sleep(mills);
         } catch (InterruptedException e) {

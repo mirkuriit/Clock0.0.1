@@ -43,6 +43,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
 
     public AlarmAdapter(Context context, Fragment fragment, List<Alarm> alarms) {
         this.alarms = alarms;
+        this.fragment = fragment;
         inflater = LayoutInflater.from(context);
     }
 
@@ -57,6 +58,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
     public void onBindViewHolder(AlarmHolder holder, int position) {
         Alarm alarm = alarms.get(position);
 
+
         holder.switchAlarmList.setChecked(alarm.isEnabled);
         holder.switchAlarmList.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -66,18 +68,10 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
 
                 // TODO: 08.04.2022 here we also start or stop workManager
                 if(b) {
-                    AlarmWorkLauncher.startAlarmWorker(inflater.getContext(), fragment, alarm.id, alarm.hour, alarm.minute, new Observer<WorkInfo>() {
-                        @Override
-                        public void onChanged(WorkInfo workInfo) {
-                            if(workInfo.getState().isFinished()) {
-                                Intent intent = new Intent(inflater.getContext(), AlarmRingActivity.class);
-                                intent.putExtra(Const.INTENT_KEY_ALARM_ID, alarm.id);
-                                inflater.getContext().startActivity(intent);
-                            }
-                        }
-                    });
+                    AlarmWorkLauncher.startAlarmWorker(inflater.getContext(), fragment, alarm.id, alarm.hour, alarm.minute, AlarmWorkLauncher.getAlarmWorkerObserver(inflater.getContext(), alarm.id));
                 }
                 else {
+                    // FIXME: 26.04.2022 here we suddenly don't stop alarm worker! I don't know why!
                     AlarmWorkLauncher.stopAlarmWorker(inflater.getContext(), String.valueOf(alarm.id));
                 }
             }
@@ -114,6 +108,11 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
                     });
                     holder.textAlarmListDates.setText(AlarmRepeatUITextBuilder.getStringByTime(inflater.getContext(), alarm.hour, alarm.minute));
                     holder.scrollViewChips.setVisibility(View.GONE);
+
+                    if(alarm.isEnabled) {
+                        AlarmWorkLauncher.stopAlarmWorker(inflater.getContext(), String.valueOf(alarm.id));
+                        AlarmWorkLauncher.startAlarmWorker(inflater.getContext(), fragment, alarm.id, alarm.hour, alarm.minute, AlarmWorkLauncher.getAlarmWorkerObserver(inflater.getContext(), alarm.id));
+                    }
                 }
                 alarm.isRepeat = b;
                 AlarmDatabaseManager.updateAlarm(AlarmDatabaseClient.getInstance(inflater.getContext()).getAppDatabase(), alarm);
@@ -229,7 +228,9 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
         holder.buttonAlarmListChoosePuzzleType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(inflater.getContext(),  ChoosePuzzleActivity.class);
+                intent.putExtra(Const.INTENT_KEY_ALARM_ID, alarm.id);
+                inflater.getContext().startActivity(intent);
             }
         });
 
@@ -289,10 +290,20 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
                                 //but to do this we just can set checked false in checkBoxAlarmListRepeat. In checkBox will be run onCheckedChangeListener if we do it
                                 holder.checkBoxAlarmListRepeat.setChecked(false);
                                 holder.textAlarmListDates.setText(AlarmRepeatUITextBuilder.getStringByTime(inflater.getContext(), alarm.hour, alarm.minute));
+
+                                if(alarm.isEnabled) {
+                                    AlarmWorkLauncher.stopAlarmWorker(inflater.getContext(), String.valueOf(alarm.id));
+                                    AlarmWorkLauncher.startAlarmWorker(inflater.getContext(), fragment, alarm.id, alarm.hour, alarm.minute, AlarmWorkLauncher.getAlarmWorkerObserver(inflater.getContext(), alarm.id));
+                                }
                             }
                             else {
                                 AlarmDatabaseManager.updateAlarmRepeating(AlarmDatabaseClient.getInstance(inflater.getContext()).getAppDatabase(), alarmRepeating);
                                 holder.textAlarmListDates.setText(AlarmRepeatUITextBuilder.getStringByDaysArray(inflater.getContext(), alarmRepeating.getArrayOfBooleanDays()));
+
+                                if(alarm.isEnabled) {
+                                    AlarmWorkLauncher.stopAlarmWorker(inflater.getContext(), String.valueOf(alarm.id));
+                                    AlarmWorkLauncher.startAlarmWorker(inflater.getContext(), fragment, alarm.id, alarm.hour, alarm.minute, alarmRepeating.getArrayOfBooleanDays(), AlarmWorkLauncher.getAlarmWorkerObserver(inflater.getContext(), alarm.id));
+                                }
                             }
 
                         }

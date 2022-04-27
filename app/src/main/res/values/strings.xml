@@ -24,4 +24,14 @@
     <string name="solve_puzzle">solve the puzzle</string>
     <string name="puzzle">Puzzle</string>
     <string name="choose_puzzle_type">Choose the type of puzzle</string>
+    <string name="first_degree_difficulty">The FIRST degree of difficulty</string>
+    <string name="first_degree_difficulty_description">There are simple arithmetic expressions like <i>12+17</i> or <i>60-25</i>. We\'re sure, you can solve it quickly!</string>
+    <string name="second_degree_difficulty">The SECOND degree of difficulty</string>
+    <string name="second_degree_difficulty_description">There are some expressions with big integer numbers like <i>421*3</i> or simple linear equations like <i>11x = 132</i></string>
+    <string name="third_degree_difficulty">The THIRD degree of difficulty</string>
+    <string name="third_degree_difficulty_description">There are simple quadratic equations like <i>5x^2 − 14x + 17 = 0</i>. You can use discriminant or Vieta\'s theorem to solve it.</string>
+    <string name="fourth_degree_difficulty">The FOURTH degree of difficulty</string>
+    <string name="fourth_degree_difficulty_description">So, if you\'re real genius of math, you can solve the biquadrate equation like <i>ax^4 + bx^2 + c = 0</i>. It would be really cool, if you were solve it while alarm is ringing!</string>
+    <string name="apply">apply</string>
+    <string name="send_answer">send answer</string>
 </resources>

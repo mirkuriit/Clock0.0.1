@@ -73,4 +73,66 @@ public class DateManager {
         }
         return result;
     }
+
+    public static long getMillsForAlarm(int hour, int minute, boolean[] days) {
+        long result = 0;
+
+        int currentHour = Calendar.getInstance().get(Calendar.HOUR);
+        int currentMinute = Calendar.getInstance().get(Calendar.MINUTE);
+
+        int amPm = Calendar.getInstance().get(Calendar.AM_PM);
+        if(amPm == Calendar.PM) {
+            currentHour+=12;
+        }
+
+        //there are English culture system: Sunday is the first, Monday is the second and Tuesday is
+        //the third
+        int currentDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+        //so, I want to get normal value where Monday - 0, Tuesday - 1, Wednesday - 2...
+        currentDay-=2;
+        if(currentDay<0) {
+            currentDay+=7;
+        }
+
+        int nearestDay = isDateTomorrow(hour, minute) ? currentDay+1 : currentDay;
+        if(nearestDay>6) {
+            nearestDay-=7;
+        }
+
+        for(int i = nearestDay;i<days.length;i++) {
+            if(days[i]) {
+                nearestDay= i;
+                break;
+            }
+        }
+        if(!days[nearestDay]) {
+            // so there are no days with alarm this week
+            for(int i = 0; i<=currentDay;i++) {
+                if(days[i]) {
+                    nearestDay = i;
+                    break;
+                }
+            }
+        }
+
+        if(nearestDay>=currentDay) {
+            if(isDateTomorrow(hour, minute)) {
+                result = (nearestDay-currentDay)*86400_000-(86400_000-getMillsForAlarm(hour, minute));
+            }
+            else {
+                result = (nearestDay-currentDay)*86400_000+getMillsForAlarm(hour, minute);
+            }
+
+        }
+        else {
+            if(isDateTomorrow(hour, minute)) {
+                result = 86400_000*7 - (currentDay-nearestDay)*86400_000 - getMillsForAlarm(hour, minute);
+            }
+            else {
+                result = 86400_000*7 - (currentDay-nearestDay)*86400_000 + getMillsForAlarm(hour, minute);
+            }
+
+        }
+        return result;
+    }
 }

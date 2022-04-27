@@ -1,8 +1,10 @@
 package com.terabyte.clock001;
 
 import android.content.Context;
+import android.content.Intent;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.work.Data;
 import androidx.work.OneTimeWorkRequest;
@@ -29,21 +31,54 @@ import java.util.UUID;
  */
 
 public class AlarmWorkLauncher {
-    public static void startAlarmWorker(Context context, Fragment fragment, long alarmId, int hour, int minute, Observer<WorkInfo> observer) {
+    public static void startAlarmWorker(Context context, LifecycleOwner owner, long alarmId, int hour, int minute, Observer<WorkInfo> observer) {
+        long mills = DateManager.getMillsForAlarm(hour, minute);
+
         Data data = new Data.Builder()
-                .putInt(Const.DATA_KEY_HOUR, hour)
-                .putInt(Const.DATA_KEY_MINUTE, minute)
+                .putLong(Const.DATA_KEY_MILLS, mills)
                 .build();
+
         WorkRequest workRequest = new OneTimeWorkRequest.Builder(AlarmWorker.class)
                 .setInputData(data)
                 .addTag(String.valueOf(alarmId))
                 .build();
-        WorkManager.getInstance(context).getWorkInfoByIdLiveData(workRequest.getId()).observe(fragment, observer);
 
         WorkManager.getInstance(context).enqueue(workRequest);
+
+        WorkManager.getInstance(context).getWorkInfoByIdLiveData(workRequest.getId()).observe(owner, observer);
+    }
+
+    public static void startAlarmWorker(Context context, LifecycleOwner owner, long alarmId, int hour, int minute, boolean[] days, Observer<WorkInfo> observer) {
+        long mills = DateManager.getMillsForAlarm(hour, minute, days);
+
+        Data data = new Data.Builder()
+                .putLong(Const.DATA_KEY_MILLS, mills)
+                .build();
+
+        WorkRequest workRequest = new OneTimeWorkRequest.Builder(AlarmWorker.class)
+                .setInputData(data)
+                .addTag(String.valueOf(alarmId))
+                .build();
+
+        WorkManager.getInstance(context).enqueue(workRequest);
+
+        WorkManager.getInstance(context).getWorkInfoByIdLiveData(workRequest.getId()).observe(owner, observer);
     }
 
     public static void stopAlarmWorker(Context context, String tag) {
         WorkManager.getInstance(context).cancelAllWorkByTag(tag);
+    }
+
+    public static Observer<WorkInfo> getAlarmWorkerObserver(Context context, long alarmId) {
+        return new Observer<WorkInfo>() {
+            @Override
+            public void onChanged(WorkInfo workInfo) {
+                if(workInfo.getState().isFinished() & !workInfo.getState().equals(WorkInfo.State.CANCELLED)) {
+                    Intent intent = new Intent(context, AlarmRingActivity.class);
+                    intent.putExtra(Const.INTENT_KEY_ALARM_ID, alarmId);
+                    context.startActivity(intent);
+                }
+            }
+        };
     }
 }

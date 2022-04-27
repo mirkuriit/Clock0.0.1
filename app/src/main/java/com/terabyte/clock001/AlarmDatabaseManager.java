@@ -19,18 +19,16 @@ import java.util.List;
 public class AlarmDatabaseManager {
 
     public static void createAlarm(AlarmDatabase db, Alarm alarm, PostExecuteCode code) {
-        class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Void> {
+        class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Long> {
             @Override
-            protected Void doInBackground(AlarmDatabase... alarmDatabases) {
+            protected Long doInBackground(AlarmDatabase... alarmDatabases) {
                 AlarmDatabase db = alarmDatabases[0];
-                db.alarmDao().insert(alarm);
-                return null;
+                return db.alarmDao().insert(alarm);
             }
 
             @Override
-            protected void onPostExecute(Void unused) {
-                super.onPostExecute(unused);
-                code.doInPostExecute();
+            protected void onPostExecute(Long createdAlarmId) {
+                code.doInPostExecuteWhenWeGotIdOfCreatedAlarm(createdAlarmId);
             }
         }
 
@@ -212,19 +210,13 @@ public class AlarmDatabaseManager {
         task.execute(db);
     }
 
-    public static void updateAlarmPuzzle(AlarmDatabase db, AlarmPuzzle alarmPuzzle, PostExecuteCode code) {
+    public static void updateAlarmPuzzle(AlarmDatabase db, AlarmPuzzle alarmPuzzle) {
         class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Void> {
             @Override
             protected Void doInBackground(AlarmDatabase... alarmDatabases) {
                 AlarmDatabase db = alarmDatabases[0];
                 db.alarmPuzzleDao().update(alarmPuzzle);
                 return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void unused) {
-                super.onPostExecute(unused);
-                code.doInPostExecute();
             }
         }
 
