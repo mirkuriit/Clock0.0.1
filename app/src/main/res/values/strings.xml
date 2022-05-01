@@ -34,4 +34,7 @@
     <string name="fourth_degree_difficulty_description">So, if you\'re real genius of math, you can solve the biquadrate equation like <i>ax^4 + bx^2 + c = 0</i>. It would be really cool, if you were solve it while alarm is ringing!</string>
     <string name="apply">apply</string>
     <string name="send_answer">send answer</string>
+    <string name="difficulty_instruction1">evaluate math expression</string>
+    <string name="difficulty_instruction2">find the minimal answer of equation</string>
+    <string name="incorrect_answer">Incorrect answer!</string>
 </resources>

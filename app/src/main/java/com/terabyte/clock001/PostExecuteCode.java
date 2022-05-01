@@ -25,7 +25,7 @@ public interface PostExecuteCode {
 
     }
 
-    //we override this method when we use method getAllAlarms() of class AlarmDatabaseManager
+    //we override this method when we use methods getAllAlarms() of class AlarmDatabaseManager
     default void doInPostExecuteWhenWeGotAllAlarms(List<Alarm> alarms) {
 
     }
@@ -35,7 +35,7 @@ public interface PostExecuteCode {
 
     }
 
-    //we use this method in other situations
+    //we use this method in other situations kinda importDb()
     default void doInPostExecute() {
 
     }

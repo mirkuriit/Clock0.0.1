@@ -6,6 +6,8 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import java.util.List;
+
 /**
  * this Dao interface is used by Room database. And this Dao interface works with AlarmPuzzle class.
  */
@@ -23,4 +25,7 @@ public interface AlarmPuzzleDao {
 
     @Query("select * from alarmpuzzle where parentAlarmId = :parentAlarmId")
     AlarmPuzzle getByParentAlarmId(long parentAlarmId);
+
+    @Query("select * from alarmpuzzle")
+    List<AlarmPuzzle> getAll();
 }

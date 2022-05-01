@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
         android:gravity="center"
-        android:text="find the minimal answer of equence"
+        android:text="find the minimal answer of equation"
         android:textSize="20sp"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="10dp"
@@ -43,11 +43,14 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:text="Answer:"
-        app:layout_constraintBottom_toTopOf="@id/buttonSolvePuzzleSendAnswer"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/editSolvePuzzleAnswer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/editSolvePuzzleAnswer" />
 
     <EditText
         android:id="@+id/editSolvePuzzleAnswer"
+        android:text="200"
+        style="@style/styleDescription2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"

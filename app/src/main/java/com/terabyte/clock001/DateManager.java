@@ -14,6 +14,11 @@ public class DateManager {
         int currentHour = Calendar.getInstance().get(Calendar.HOUR);
         int currentMinute = Calendar.getInstance().get(Calendar.MINUTE);
 
+        int amPm = Calendar.getInstance().get(Calendar.AM_PM);
+        if(amPm == Calendar.PM) {
+            currentHour+=12;
+        }
+
         if(hour>currentHour) {
             result = false;
         }

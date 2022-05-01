@@ -16,6 +16,9 @@ public class AlarmRingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm_ring);
+
+        getSupportActionBar().hide();
+
         long alarmId = getIntent().getExtras().getLong(Const.INTENT_KEY_ALARM_ID);
 
         TextView textAlarmRingTime = findViewById(R.id.textAlarmRingTime);
@@ -51,6 +54,7 @@ public class AlarmRingActivity extends AppCompatActivity {
                                 public void onClick(View view) {
                                     Intent intent = new Intent(getApplicationContext(), SolvePuzzleActivity.class);
                                     intent.putExtra(Const.INTENT_KEY_HARDCORE_LEVEL, alarmPuzzle.hardcoreLevel);
+                                    intent.putExtra(Const.INTENT_KEY_ALARM_ID, alarm.id);
                                     startActivity(intent);
                                 }
                             });
@@ -98,7 +102,11 @@ public class AlarmRingActivity extends AppCompatActivity {
                                 MediaPlayerManager.mediaPlayer = null;
                                 MediaPlayerManager.alarmIdForMediaPlayer = -1;
                             }
-                            // TODO: 27.04.2022 here we turn off alarm but we launch alarmWorker to five minutes + 
+                            // TODO: 27.04.2022 here we turn off alarm but we launch alarmWorker to five minutes +
+                            AlarmWorkLauncher.startAlarmWorker(getApplicationContext(), AlarmRingActivity.this, alarm.id, AlarmWorkLauncher.getAlarmWorkerObserver(getApplicationContext(), alarm.id));
+                            alarm.isEnabled = false;
+                            AlarmDatabaseManager.updateAlarm(AlarmDatabaseClient.getInstance(getApplicationContext()).getAppDatabase(), alarm);
+                            finish();
                         }
                     });
                 }
@@ -106,4 +114,5 @@ public class AlarmRingActivity extends AppCompatActivity {
             }
         });
     }
+
 }

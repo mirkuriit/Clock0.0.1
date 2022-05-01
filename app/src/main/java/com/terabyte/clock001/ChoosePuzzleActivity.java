@@ -35,49 +35,33 @@ public class ChoosePuzzleActivity extends AppCompatActivity {
 
 
         long alarmId = getIntent().getExtras().getLong(Const.INTENT_KEY_ALARM_ID);
-        AlarmDatabaseManager.getAlarmPuzzleByParentAlarmId(AlarmDatabaseClient.getInstance(getApplicationContext()).getAppDatabase(), alarmId, new PostExecuteCode() {
+        AlarmPuzzle alarmPuzzle = AlarmDatabaseManager.getAlarmPuzzleFromListByParentAlarmId(alarmId);
+
+        RadioGroup radioGroupAlarmPuzzles = findViewById(R.id.radioGroupAlarmPuzzles);
+
+        int[] radioIds = {R.id.radioFirstAlarmPuzzleDifficulty, R.id.radioSecondAlarmPuzzleDifficulty, R.id.radioThirdAlarmPuzzleDifficulty, R.id.radioFourthAlarmPuzzleDifficulty};
+        int[] textIds = {R.id.textFirstAlarmPuzzleDifficulty, R.id.textSecondAlarmPuzzleDifficulty, R.id.textThirdAlarmPuzzleDifficulty, R.id.textFourthAlarmPuzzleDifficulty};
+
+        radioGroupAlarmPuzzles.check(radioIds[alarmPuzzle.hardcoreLevel]);
+        findViewById(textIds[alarmPuzzle.hardcoreLevel]).setVisibility(View.VISIBLE);
+
+        radioGroupAlarmPuzzles.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void doInPostExecuteWhenWeGotAlarmPuzzle(AlarmPuzzle alarmPuzzle) {
-                RadioGroup radioGroupAlarmPuzzles = findViewById(R.id.radioGroupAlarmPuzzles);
+            public void onCheckedChanged(RadioGroup radioGroup, int id) {
+                int hardcoreLevel = indexOf(id, radioIds);
 
-                int[] radioIds = {R.id.radioFirstAlarmPuzzleDifficulty, R.id.radioSecondAlarmPuzzleDifficulty, R.id.radioThirdAlarmPuzzleDifficulty, R.id.radioFourthAlarmPuzzleDifficulty};
-                int[] textIds = {R.id.textFirstAlarmPuzzleDifficulty, R.id.textSecondAlarmPuzzleDifficulty, R.id.textThirdAlarmPuzzleDifficulty, R.id.textFourthAlarmPuzzleDifficulty};
-
-                radioGroupAlarmPuzzles.check(radioIds[alarmPuzzle.hardcoreLevel]);
-                findViewById(textIds[alarmPuzzle.hardcoreLevel]).setVisibility(View.VISIBLE);
-
-                radioGroupAlarmPuzzles.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(RadioGroup radioGroup, int id) {
-                        int hardcoreLevel = indexOf(id, radioIds);
-
-                        for(int textId : textIds) {
-                            if(textId == textIds[hardcoreLevel]) {
-                                findViewById(textId).setVisibility(View.VISIBLE);
-                            }
-                            else {
-                                findViewById(textId).setVisibility(View.GONE);
-                            }
-                        }
-
-                        alarmPuzzle.hardcoreLevel = hardcoreLevel;
-                        AlarmDatabaseManager.updateAlarmPuzzle(AlarmDatabaseClient.getInstance(getApplicationContext()).getAppDatabase(), alarmPuzzle);
+                for(int textId : textIds) {
+                    if(textId == textIds[hardcoreLevel]) {
+                        findViewById(textId).setVisibility(View.VISIBLE);
                     }
-                });
+                    else {
+                        findViewById(textId).setVisibility(View.GONE);
+                    }
+                }
+
+                alarmPuzzle.hardcoreLevel = hardcoreLevel;
             }
         });
-
-
-
-
-
-
-
-
-
-
-
-
     }
 
 

@@ -35,8 +35,9 @@ public class AlarmFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_alarm, container, false);
+
         RecyclerView recyclerAlarms = view.findViewById(R.id.recyclerAlarms);
-        fillRecyclerView(recyclerAlarms);
+        fillRecyclerAlarms(recyclerAlarms);
 
 
         FloatingActionButton buttonAddAlarm = view.findViewById(R.id.buttonAddAlarm);
@@ -56,7 +57,13 @@ public class AlarmFragment extends Fragment {
                             @Override
                             public void doInPostExecuteWhenWeGotIdOfCreatedAlarm(Long createdAlarmId) {
                                 //here we start work manager and fill recyclerView again
-                                fillRecyclerView(recyclerAlarms);
+                                AlarmDatabaseManager.updateAlarmList(AlarmDatabaseClient.getInstance(getContext()).getAppDatabase(), new PostExecuteCode() {
+                                    @Override
+                                    public void doInPostExecute() {
+                                        fillRecyclerAlarms(recyclerAlarms);
+                                    }
+                                });
+
                                 AlarmWorkLauncher.startAlarmWorker(getContext(), AlarmFragment.this, createdAlarmId, alarm.hour, alarm.minute, AlarmWorkLauncher.getAlarmWorkerObserver(getContext(), createdAlarmId));
                             }
                         });
@@ -71,17 +78,56 @@ public class AlarmFragment extends Fragment {
         return view;
     }
 
-    private void fillRecyclerView (RecyclerView recyclerAlarms){
-        AlarmDatabaseManager.getAllAlarms(AlarmDatabaseClient.getInstance(getContext()).getAppDatabase(), new PostExecuteCode() {
-            @Override
-            public void doInPostExecuteWhenWeGotAllAlarms(List<Alarm> alarms) {
-                if (alarms.size() > 0) {
-                    recyclerAlarms.setAdapter(new AlarmAdapter(getContext(), AlarmFragment.this, alarms));
-                    recyclerAlarms.setLayoutManager(new LinearLayoutManager(getContext()));
-                } else {
-                    // TODO: 30.03.2022 show text "no alarms here yet"
-                }
-            }
-        });
+
+    private void fillRecyclerAlarms(RecyclerView recyclerAlarms) {
+        AlarmAdapter adapter = new AlarmAdapter(getContext(), this, AlarmDatabaseManager.getAlarmList());
+        recyclerAlarms.setAdapter(adapter);
+        recyclerAlarms.setLayoutManager(new LinearLayoutManager(getContext()));
     }
+//    //parameter "noChangesAmongAlarms" is for optimization. If we're sure that there's no changes
+//    //among alarms in Room database, we set true.
+//    private void fillRecyclerView (RecyclerView recyclerAlarms, boolean noChangesAmongAlarms){
+//        if(noChangesAmongAlarms) {
+//            if(Const.allAlarms==null) {
+//                AlarmDatabaseManager.getAllAlarms(AlarmDatabaseClient.getInstance(getContext()).getAppDatabase(), new PostExecuteCode() {
+//                    @Override
+//                    public void doInPostExecuteWhenWeGotAllAlarms(List<Alarm> alarms) {
+//                        if (alarms.size() > 0) {
+//                            recyclerAlarms.setAdapter(new AlarmAdapter(getContext(), AlarmFragment.this, alarms));
+//                            recyclerAlarms.setLayoutManager(new LinearLayoutManager(getContext()));
+//                        }
+//                        else {
+//                            // TODO: 30.03.2022 show text "no alarms here yet"
+//                        }
+//                        Const.allAlarms = alarms;
+//                    }
+//                });
+//            }
+//            else {
+//                if (Const.allAlarms.size() > 0) {
+//                    recyclerAlarms.setAdapter(new AlarmAdapter(getContext(), AlarmFragment.this, Const.allAlarms));
+//                    recyclerAlarms.setLayoutManager(new LinearLayoutManager(getContext()));
+//                }
+//                else {
+//                    // TODO: 30.03.2022 show text "no alarms here yet"
+//                }
+//            }
+//        }
+//        else {
+//            AlarmDatabaseManager.getAllAlarms(AlarmDatabaseClient.getInstance(getContext()).getAppDatabase(), new PostExecuteCode() {
+//                @Override
+//                public void doInPostExecuteWhenWeGotAllAlarms(List<Alarm> alarms) {
+//                    if (alarms.size() > 0) {
+//                        recyclerAlarms.setAdapter(new AlarmAdapter(getContext(), AlarmFragment.this, alarms));
+//                        recyclerAlarms.setLayoutManager(new LinearLayoutManager(getContext()));
+//                    }
+//                    else {
+//                        // TODO: 30.03.2022 show text "no alarms here yet"
+//                    }
+//                }
+//            });
+//        }
+//
+//    }
+
 }

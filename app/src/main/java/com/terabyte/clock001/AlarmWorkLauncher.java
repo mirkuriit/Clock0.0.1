@@ -65,6 +65,24 @@ public class AlarmWorkLauncher {
         WorkManager.getInstance(context).getWorkInfoByIdLiveData(workRequest.getId()).observe(owner, observer);
     }
 
+    public static void startAlarmWorker(Context context, LifecycleOwner owner, long alarmId, Observer<WorkInfo> observer) {
+        // TODO: 30.04.2022 also we can create radio button in settings of alarm to choose 5 or 10 minutes, for example
+        long mills = 60_000*5;
+
+        Data data = new Data.Builder()
+                .putLong(Const.DATA_KEY_MILLS, mills)
+                .build();
+
+        WorkRequest workRequest = new OneTimeWorkRequest.Builder(AlarmWorker.class)
+                .setInputData(data)
+                .addTag(String.valueOf(alarmId))
+                .build();
+
+        WorkManager.getInstance(context).enqueue(workRequest);
+
+        WorkManager.getInstance(context).getWorkInfoByIdLiveData(workRequest.getId()).observe(owner, observer);
+    }
+
     public static void stopAlarmWorker(Context context, String tag) {
         WorkManager.getInstance(context).cancelAllWorkByTag(tag);
     }
@@ -73,9 +91,10 @@ public class AlarmWorkLauncher {
         return new Observer<WorkInfo>() {
             @Override
             public void onChanged(WorkInfo workInfo) {
-                if(workInfo.getState().isFinished() & !workInfo.getState().equals(WorkInfo.State.CANCELLED)) {
+                if(workInfo.getState().equals(WorkInfo.State.SUCCEEDED)) {
                     Intent intent = new Intent(context, AlarmRingActivity.class);
                     intent.putExtra(Const.INTENT_KEY_ALARM_ID, alarmId);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
                 }
             }
