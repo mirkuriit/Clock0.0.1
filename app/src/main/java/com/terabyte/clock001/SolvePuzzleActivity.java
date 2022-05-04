@@ -56,6 +56,13 @@ public class SolvePuzzleActivity extends AppCompatActivity {
                             MediaPlayerManager.mediaPlayer = null;
                             MediaPlayerManager.alarmIdForMediaPlayer = -1;
                         }
+
+                        if(MediaPlayerManager.vibrator!=null & MediaPlayerManager.alarmIdForVibrator==alarmId) {
+                            MediaPlayerManager.vibrator.cancel();
+                            MediaPlayerManager.vibrator = null;
+                            MediaPlayerManager.alarmIdForVibrator = -1;
+                        }
+
                         AlarmDatabaseManager.getAlarmById(AlarmDatabaseClient.getInstance(getApplicationContext()).getAppDatabase(), alarmId, new PostExecuteCode() {
                             @Override
                             public void doInPostExecuteWhenWeGotAlarm(Alarm alarm) {

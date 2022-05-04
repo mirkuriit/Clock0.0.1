@@ -75,19 +75,18 @@ public class AlarmDatabaseManager {
         task.execute(db);
     }
 
-    public static void deleteAlarm(AlarmDatabase db, Alarm alarm, PostExecuteCode code) {
-        class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Void> {
+    public static void getAlarmById(AlarmDatabase db, long alarmId, PostExecuteCode code) {
+        class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Alarm> {
             @Override
-            protected Void doInBackground(AlarmDatabase... alarmDatabases) {
+            protected Alarm doInBackground(AlarmDatabase... alarmDatabases) {
                 AlarmDatabase db = alarmDatabases[0];
-                db.alarmDao().delete(alarm);
-                return null;
+                return db.alarmDao().getAlarmById(alarmId);
             }
 
             @Override
-            protected void onPostExecute(Void unused) {
-                super.onPostExecute(unused);
-                code.doInPostExecute();
+            protected void onPostExecute(Alarm alarm) {
+                super.onPostExecute(alarm);
+                code.doInPostExecuteWhenWeGotAlarm(alarm);
             }
         }
 
@@ -95,50 +94,17 @@ public class AlarmDatabaseManager {
         task.execute(db);
     }
 
-    public static void getAllAlarms(AlarmDatabase db, PostExecuteCode code) {
-        class DatabaseTask extends AsyncTask<AlarmDatabase, Void, List<Alarm>> {
+    public static void createAlarmRepeating(AlarmDatabase db, AlarmRepeating alarmRepeating, PostExecuteCode code) {
+        class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Long> {
             @Override
-            protected List<Alarm> doInBackground(AlarmDatabase... alarmDatabases) {
+            protected Long doInBackground(AlarmDatabase... alarmDatabases) {
                 AlarmDatabase db = alarmDatabases[0];
-                return db.alarmDao().getAll();
+                return db.alarmRepeatingDao().insert(alarmRepeating);
             }
 
             @Override
-            protected void onPostExecute(List<Alarm> alarms) {
-                super.onPostExecute(alarms);
-                code.doInPostExecuteWhenWeGotAllAlarms(alarms);
-            }
-        }
-
-        DatabaseTask task = new DatabaseTask();
-        task.execute(db);
-    }
-
-    public static void createAlarmRepeating(AlarmDatabase db, long parentAlarmId, boolean[] repeatingDays, PostExecuteCode code) {
-        class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Void> {
-            @Override
-            protected Void doInBackground(AlarmDatabase... alarmDatabases) {
-                AlarmDatabase db = alarmDatabases[0];
-
-                AlarmRepeating repeating = new AlarmRepeating(parentAlarmId);
-                //algorithmic govnocode is beginning here
-                // FIXME: 30.03.2022 algorithmic govnocode
-                repeating.mo = repeatingDays[0];
-                repeating.tu = repeatingDays[1];
-                repeating.we = repeatingDays[2];
-                repeating.th = repeatingDays[3];
-                repeating.fr = repeatingDays[4];
-                repeating.sa = repeatingDays[5];
-                repeating.su = repeatingDays[6];
-                //algorithmic gobnocode is finishing here
-                db.alarmRepeatingDao().insert(repeating);
-
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void unused) {
-                code.doInPostExecute();
+            protected void onPostExecute(Long createdAlarmRepeatingId) {
+                code.doInPostExecuteWhenWeGotIdOfCreatedAlarmRepeating(createdAlarmRepeatingId);
             }
         }
 
@@ -193,37 +159,17 @@ public class AlarmDatabaseManager {
         task.execute(db);
     }
 
-    public static void getAlarmById(AlarmDatabase db, long alarmId, PostExecuteCode code) {
-        class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Alarm> {
-            @Override
-            protected Alarm doInBackground(AlarmDatabase... alarmDatabases) {
-                AlarmDatabase db = alarmDatabases[0];
-                return db.alarmDao().getAlarmById(alarmId);
-            }
-
-            @Override
-            protected void onPostExecute(Alarm alarm) {
-                super.onPostExecute(alarm);
-                code.doInPostExecuteWhenWeGotAlarm(alarm);
-            }
-        }
-
-        DatabaseTask task = new DatabaseTask();
-        task.execute(db);
-    }
-
     public static void createAlarmPuzzle(AlarmDatabase db, AlarmPuzzle alarmPuzzle, PostExecuteCode code) {
-        class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Void> {
+        class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Long> {
             @Override
-            protected Void doInBackground(AlarmDatabase... alarmDatabases) {
+            protected Long doInBackground(AlarmDatabase... alarmDatabases) {
                 AlarmDatabase db = alarmDatabases[0];
-                db.alarmPuzzleDao().insert(alarmPuzzle);
-                return null;
+                return db.alarmPuzzleDao().insert(alarmPuzzle);
             }
 
             @Override
-            protected void onPostExecute(Void unused) {
-                code.doInPostExecute();
+            protected void onPostExecute(Long createdAlarmPuzzleId) {
+                code.doInPostExecuteWhenWeGotIdOfCreatedAlarmPuzzle(createdAlarmPuzzleId);
             }
         }
 
@@ -280,6 +226,7 @@ public class AlarmDatabaseManager {
 
     ///////////////////////////////////////////////////////////////////////
 
+    //ordinary getters
     public static ArrayList<Alarm> getAlarmList() {
         return alarmList;
     }
@@ -292,6 +239,7 @@ public class AlarmDatabaseManager {
         return alarmPuzzleList;
     }
 
+    //these methods can get entity instance from our lists (not from Room database)
     public static AlarmRepeating getAlarmRepeatingFromListByParentAlarmId(long parentAlarmId) {
         AlarmRepeating result = null;
         for(AlarmRepeating alarmRepeating: alarmRepeatingList) {
@@ -314,6 +262,7 @@ public class AlarmDatabaseManager {
         return result;
     }
 
+    //this method turns on only one time when application is starting
     public static void importDb(AlarmDatabase db, PostExecuteCode code) {
         class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Void> {
 
@@ -341,97 +290,20 @@ public class AlarmDatabaseManager {
         task.execute(db);
     }
 
-    public static void updateAlarmList(AlarmDatabase db, PostExecuteCode code) {
-        class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Void> {
-
-            @Override
-            protected Void doInBackground(AlarmDatabase... alarmDatabases) {
-                AlarmDatabase db = alarmDatabases[0];
-
-                for(Alarm alarm : alarmNotChangedList) {
-                        if(!alarmList.contains(alarm)) {
-                            db.alarmDao().delete(alarm);
-                        }
-                        else {
-                            db.alarmDao().update(alarm);
-                        }
-                    }
-
-                AlarmDatabaseManager.alarmNotChangedList = (ArrayList<Alarm>) db.alarmDao().getAll();
-                AlarmDatabaseManager.alarmList = (ArrayList<Alarm>) AlarmDatabaseManager.alarmNotChangedList.clone();
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void unused) {
-                code.doInPostExecute();
-            }
-        }
-
-        DatabaseTask task = new DatabaseTask();
-        task.execute(db);
+    //we start this method when we create new entity in our application
+    public static void updateAlarmList(Alarm alarm) {
+        alarmNotChangedList.add(alarm);
+        alarmList.add(alarm);
     }
 
-    public static void updateAlarmRepeatingList(AlarmDatabase db, PostExecuteCode code) {
-        class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Void> {
-
-            @Override
-            protected Void doInBackground(AlarmDatabase... alarmDatabases) {
-                AlarmDatabase db = alarmDatabases[0];
-
-                for(AlarmRepeating alarmRepeating : alarmRepeatingNoChangedList) {
-                    if(!alarmRepeatingList.contains(alarmRepeating)) {
-                        db.alarmRepeatingDao().delete(alarmRepeating);
-                    }
-                    else {
-                        db.alarmRepeatingDao().update(alarmRepeating);
-                    }
-                }
-
-                AlarmDatabaseManager.alarmRepeatingNoChangedList = (ArrayList<AlarmRepeating>) db.alarmRepeatingDao().getAll();
-                AlarmDatabaseManager.alarmRepeatingList = (ArrayList<AlarmRepeating>) AlarmDatabaseManager.alarmRepeatingNoChangedList.clone();
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void unused) {
-                code.doInPostExecute();
-            }
-        }
-
-        DatabaseTask task = new DatabaseTask();
-        task.execute(db);
+    public static void updateAlarmRepeatingList(AlarmRepeating alarmRepeating) {
+        alarmRepeatingNoChangedList.add(alarmRepeating);
+        alarmRepeatingList.add(alarmRepeating);
     }
 
-    public static void updateAlarmPuzzleList(AlarmDatabase db, PostExecuteCode code) {
-        class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Void> {
-
-            @Override
-            protected Void doInBackground(AlarmDatabase... alarmDatabases) {
-                AlarmDatabase db = alarmDatabases[0];
-
-                for(AlarmPuzzle alarmPuzzle : alarmPuzzleNotChangedList) {
-                    if(!alarmPuzzleList.contains(alarmPuzzle)) {
-                        db.alarmPuzzleDao().delete(alarmPuzzle);
-                    }
-                    else {
-                        db.alarmPuzzleDao().update(alarmPuzzle);
-                    }
-                }
-
-                AlarmDatabaseManager.alarmPuzzleNotChangedList = (ArrayList<AlarmPuzzle>) db.alarmPuzzleDao().getAll();
-                AlarmDatabaseManager.alarmPuzzleList = (ArrayList<AlarmPuzzle>) AlarmDatabaseManager.alarmPuzzleNotChangedList.clone();
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void unused) {
-                code.doInPostExecute();
-            }
-        }
-
-        DatabaseTask task = new DatabaseTask();
-        task.execute(db);
+    public static void updateAlarmPuzzleList(AlarmPuzzle alarmPuzzle) {
+        alarmPuzzleNotChangedList.add(alarmPuzzle);
+        alarmPuzzleList.add(alarmPuzzle);
     }
 
     public static void exportDb(Context context) {

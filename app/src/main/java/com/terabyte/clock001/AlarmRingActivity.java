@@ -2,9 +2,13 @@ package com.terabyte.clock001;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.os.VibratorManager;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
@@ -35,6 +39,22 @@ public class AlarmRingActivity extends AppCompatActivity {
                     MediaPlayerManager.alarmIdForMediaPlayer = alarm.id;
                     MediaPlayerManager.mediaPlayer.start();
                     MediaPlayerManager.mediaPlayer.setLooping(true);
+                }
+
+                if(MediaPlayerManager.vibrator==null & alarm.isVibration) {
+                    MediaPlayerManager.vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    MediaPlayerManager.alarmIdForVibrator = alarm.id;
+                    if(MediaPlayerManager.vibrator.hasVibrator()) {
+                        long[] vibratePattern = {0,1500, 1000, 1500};
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                            VibrationEffect effect = VibrationEffect.createWaveform(vibratePattern, 0);
+                            MediaPlayerManager.vibrator.vibrate(effect);
+                        }
+                        else {
+                            MediaPlayerManager.vibrator.vibrate(vibratePattern, 0);
+                        }
+
+                    }
                 }
 
                 Button buttonAlarmSolvePuzzle = findViewById(R.id.buttonAlarmSolvePuzzle);
@@ -75,7 +95,13 @@ public class AlarmRingActivity extends AppCompatActivity {
                                 MediaPlayerManager.mediaPlayer = null;
                                 MediaPlayerManager.alarmIdForMediaPlayer = -1;
                             }
-                            
+
+                            if(MediaPlayerManager.vibrator!=null & MediaPlayerManager.alarmIdForVibrator==alarm.id) {
+                                MediaPlayerManager.vibrator.cancel();
+                                MediaPlayerManager.vibrator = null;
+                                MediaPlayerManager.alarmIdForVibrator = -1;
+                            }
+
                             if(alarm.isRepeat) {
                                 // TODO: 26.04.2022 here we select alarmRepeating and turn on alarmWorker again
                                 AlarmDatabaseManager.getAlarmRepeatingByParentAlarmId(AlarmDatabaseClient.getInstance(getApplicationContext()).getAppDatabase(), alarm.id, new PostExecuteCode() {
@@ -102,9 +128,18 @@ public class AlarmRingActivity extends AppCompatActivity {
                                 MediaPlayerManager.mediaPlayer = null;
                                 MediaPlayerManager.alarmIdForMediaPlayer = -1;
                             }
+
+                            if(MediaPlayerManager.vibrator!=null & MediaPlayerManager.alarmIdForVibrator==alarm.id) {
+                                MediaPlayerManager.vibrator.cancel();
+                                MediaPlayerManager.vibrator = null;
+                                MediaPlayerManager.alarmIdForVibrator = -1;
+                            }
+
                             // TODO: 27.04.2022 here we turn off alarm but we launch alarmWorker to five minutes +
                             AlarmWorkLauncher.startAlarmWorker(getApplicationContext(), AlarmRingActivity.this, alarm.id, AlarmWorkLauncher.getAlarmWorkerObserver(getApplicationContext(), alarm.id));
                             alarm.isEnabled = false;
+
+
                             AlarmDatabaseManager.updateAlarm(AlarmDatabaseClient.getInstance(getApplicationContext()).getAppDatabase(), alarm);
                             finish();
                         }

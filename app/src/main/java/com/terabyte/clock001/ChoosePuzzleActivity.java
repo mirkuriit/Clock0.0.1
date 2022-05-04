@@ -84,4 +84,10 @@ public class ChoosePuzzleActivity extends AppCompatActivity {
         }
         return -1;
     }
+
+    @Override
+    protected void onDestroy() {
+        AlarmDatabaseManager.exportDb(getApplicationContext());
+        super.onDestroy();
+    }
 }

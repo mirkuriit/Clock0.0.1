@@ -35,6 +35,16 @@ public interface PostExecuteCode {
 
     }
 
+    //we override this method when we use method createAlarmRepeating of class AlarmDatabaseManager
+    default void doInPostExecuteWhenWeGotIdOfCreatedAlarmRepeating(long createdAlarmRepeatingId) {
+
+    }
+
+    //we override this method when we use method createAlarmPuzzle of class AlarmDatabaseManager
+    default void doInPostExecuteWhenWeGotIdOfCreatedAlarmPuzzle(long createdAlarmPuzzleId) {
+
+    }
+
     //we use this method in other situations kinda importDb()
     default void doInPostExecute() {
 

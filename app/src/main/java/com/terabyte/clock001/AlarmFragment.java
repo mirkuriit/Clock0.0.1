@@ -8,6 +8,8 @@ import android.os.Bundle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,16 +36,25 @@ public class AlarmFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_alarm, container, false);
+        View view;
+        if(AlarmDatabaseManager.getAlarmList().size()==0) {
+            view = inflater.inflate(R.layout.fragment_alarm_no_alarms, container, false);
+        }
+        else {
+            view = inflater.inflate(R.layout.fragment_alarm, container, false);
 
-        RecyclerView recyclerAlarms = view.findViewById(R.id.recyclerAlarms);
-        fillRecyclerAlarms(recyclerAlarms);
+            RecyclerView recyclerAlarms = view.findViewById(R.id.recyclerAlarms);
+            fillRecyclerAlarms(recyclerAlarms);
+        }
+
+
+
 
 
         FloatingActionButton buttonAddAlarm = view.findViewById(R.id.buttonAddAlarm);
         buttonAddAlarm.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View buttonAddAlarm) {
 
                 TimePickerDialog.OnTimeSetListener listener = new TimePickerDialog.OnTimeSetListener() {
                     @Override
@@ -53,18 +64,27 @@ public class AlarmFragment extends Fragment {
                                 new Alarm(timePicker.getHour(), timePicker.getMinute(), "", true, false, true, false) :
                                 new Alarm(timePicker.getCurrentHour(), timePicker.getCurrentMinute(), "", true, false, true, false);
 
+                        boolean willWeRestartFragmentToUpdateLayout = AlarmDatabaseManager.getAlarmList().size()==0;
+
                         AlarmDatabaseManager.createAlarm(AlarmDatabaseClient.getInstance(getContext()).getAppDatabase(), alarm, new PostExecuteCode() {
                             @Override
                             public void doInPostExecuteWhenWeGotIdOfCreatedAlarm(Long createdAlarmId) {
                                 //here we start work manager and fill recyclerView again
-                                AlarmDatabaseManager.updateAlarmList(AlarmDatabaseClient.getInstance(getContext()).getAppDatabase(), new PostExecuteCode() {
-                                    @Override
-                                    public void doInPostExecute() {
-                                        fillRecyclerAlarms(recyclerAlarms);
-                                    }
-                                });
+                                alarm.id = createdAlarmId;
+                                AlarmDatabaseManager.updateAlarmList(alarm);
 
-                                AlarmWorkLauncher.startAlarmWorker(getContext(), AlarmFragment.this, createdAlarmId, alarm.hour, alarm.minute, AlarmWorkLauncher.getAlarmWorkerObserver(getContext(), createdAlarmId));
+                                AlarmWorkLauncher.startAlarmWorker(getContext(), AlarmFragment.this.getActivity(), createdAlarmId, alarm.hour, alarm.minute, AlarmWorkLauncher.getAlarmWorkerObserver(getContext(), createdAlarmId));
+
+                                if(willWeRestartFragmentToUpdateLayout) {
+                                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                                    AlarmFragment fragment = new AlarmFragment();
+                                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+                                    transaction.replace(R.id.frameLayoutForFragments, fragment).commit();
+                                }
+                                else {
+                                    RecyclerView recyclerAlarms = view.findViewById(R.id.recyclerAlarms);
+                                    fillRecyclerAlarms(recyclerAlarms);
+                                }
                             }
                         });
                     }
@@ -78,56 +98,15 @@ public class AlarmFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
 
     private void fillRecyclerAlarms(RecyclerView recyclerAlarms) {
         AlarmAdapter adapter = new AlarmAdapter(getContext(), this, AlarmDatabaseManager.getAlarmList());
         recyclerAlarms.setAdapter(adapter);
         recyclerAlarms.setLayoutManager(new LinearLayoutManager(getContext()));
     }
-//    //parameter "noChangesAmongAlarms" is for optimization. If we're sure that there's no changes
-//    //among alarms in Room database, we set true.
-//    private void fillRecyclerView (RecyclerView recyclerAlarms, boolean noChangesAmongAlarms){
-//        if(noChangesAmongAlarms) {
-//            if(Const.allAlarms==null) {
-//                AlarmDatabaseManager.getAllAlarms(AlarmDatabaseClient.getInstance(getContext()).getAppDatabase(), new PostExecuteCode() {
-//                    @Override
-//                    public void doInPostExecuteWhenWeGotAllAlarms(List<Alarm> alarms) {
-//                        if (alarms.size() > 0) {
-//                            recyclerAlarms.setAdapter(new AlarmAdapter(getContext(), AlarmFragment.this, alarms));
-//                            recyclerAlarms.setLayoutManager(new LinearLayoutManager(getContext()));
-//                        }
-//                        else {
-//                            // TODO: 30.03.2022 show text "no alarms here yet"
-//                        }
-//                        Const.allAlarms = alarms;
-//                    }
-//                });
-//            }
-//            else {
-//                if (Const.allAlarms.size() > 0) {
-//                    recyclerAlarms.setAdapter(new AlarmAdapter(getContext(), AlarmFragment.this, Const.allAlarms));
-//                    recyclerAlarms.setLayoutManager(new LinearLayoutManager(getContext()));
-//                }
-//                else {
-//                    // TODO: 30.03.2022 show text "no alarms here yet"
-//                }
-//            }
-//        }
-//        else {
-//            AlarmDatabaseManager.getAllAlarms(AlarmDatabaseClient.getInstance(getContext()).getAppDatabase(), new PostExecuteCode() {
-//                @Override
-//                public void doInPostExecuteWhenWeGotAllAlarms(List<Alarm> alarms) {
-//                    if (alarms.size() > 0) {
-//                        recyclerAlarms.setAdapter(new AlarmAdapter(getContext(), AlarmFragment.this, alarms));
-//                        recyclerAlarms.setLayoutManager(new LinearLayoutManager(getContext()));
-//                    }
-//                    else {
-//                        // TODO: 30.03.2022 show text "no alarms here yet"
-//                    }
-//                }
-//            });
-//        }
-//
-//    }
 
 }
