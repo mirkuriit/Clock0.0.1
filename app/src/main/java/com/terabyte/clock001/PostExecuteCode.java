@@ -25,11 +25,6 @@ public interface PostExecuteCode {
 
     }
 
-    //we override this method when we use methods getAllAlarms() of class AlarmDatabaseManager
-    default void doInPostExecuteWhenWeGotAllAlarms(List<Alarm> alarms) {
-
-    }
-
     //we override this method when we use method createAlarm of class AlarmDatabaseManager
     default void doInPostExecuteWhenWeGotIdOfCreatedAlarm(Long createdAlarmId) {
 

@@ -30,5 +30,8 @@ public interface AlarmDao {
 
     @Query("select * from alarm where id = :alarmId")
     Alarm getAlarmById(long alarmId);
+
+    @Query("select * from alarm where isEnabled = :isEnabled")
+    List<Alarm> getAllAlarmsByEnabled(boolean isEnabled);
 }
 

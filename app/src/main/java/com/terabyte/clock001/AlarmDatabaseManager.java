@@ -29,7 +29,7 @@ public class AlarmDatabaseManager {
     private static ArrayList<AlarmPuzzle> alarmPuzzleList = null;
 
 
-    public static void createAlarm(AlarmDatabase db, Alarm alarm, PostExecuteCode code) {
+    public static void createAlarm(Context context, Alarm alarm, PostExecuteCode code) {
         class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Long> {
             @Override
             protected Long doInBackground(AlarmDatabase... alarmDatabases) {
@@ -44,10 +44,10 @@ public class AlarmDatabaseManager {
         }
 
         DatabaseTask task = new DatabaseTask();
-        task.execute(db);
+        task.execute(AlarmDatabaseClient.getInstance(context).getAppDatabase());
     }
 
-    public static void updateAlarm(AlarmDatabase db, Alarm alarm) {
+    public static void updateAlarm(Context context, Alarm alarm) {
         class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Void> {
             @Override
             protected Void doInBackground(AlarmDatabase... alarmDatabases) {
@@ -58,10 +58,10 @@ public class AlarmDatabaseManager {
         }
 
         DatabaseTask task = new DatabaseTask();
-        task.execute(db);
+        task.execute(AlarmDatabaseClient.getInstance(context).getAppDatabase());
     }
 
-    public static void deleteAlarm(AlarmDatabase db, Alarm alarm) {
+    public static void deleteAlarm(Context context, Alarm alarm) {
         class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Void> {
             @Override
             protected Void doInBackground(AlarmDatabase... alarmDatabases) {
@@ -72,10 +72,10 @@ public class AlarmDatabaseManager {
         }
 
         DatabaseTask task = new DatabaseTask();
-        task.execute(db);
+        task.execute(AlarmDatabaseClient.getInstance(context).getAppDatabase());
     }
 
-    public static void getAlarmById(AlarmDatabase db, long alarmId, PostExecuteCode code) {
+    public static void getAlarmById(Context context, long alarmId, PostExecuteCode code) {
         class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Alarm> {
             @Override
             protected Alarm doInBackground(AlarmDatabase... alarmDatabases) {
@@ -91,10 +91,10 @@ public class AlarmDatabaseManager {
         }
 
         DatabaseTask task = new DatabaseTask();
-        task.execute(db);
+        task.execute(AlarmDatabaseClient.getInstance(context).getAppDatabase());
     }
 
-    public static void createAlarmRepeating(AlarmDatabase db, AlarmRepeating alarmRepeating, PostExecuteCode code) {
+    public static void createAlarmRepeating(Context context, AlarmRepeating alarmRepeating, PostExecuteCode code) {
         class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Long> {
             @Override
             protected Long doInBackground(AlarmDatabase... alarmDatabases) {
@@ -109,10 +109,10 @@ public class AlarmDatabaseManager {
         }
 
         DatabaseTask task = new DatabaseTask();
-        task.execute(db);
+        task.execute(AlarmDatabaseClient.getInstance(context).getAppDatabase());
     }
 
-    public static void updateAlarmRepeating(AlarmDatabase db, AlarmRepeating alarmRepeating) {
+    public static void updateAlarmRepeating(Context context, AlarmRepeating alarmRepeating) {
         class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Void> {
             @Override
             protected Void doInBackground(AlarmDatabase... alarmDatabases) {
@@ -123,10 +123,10 @@ public class AlarmDatabaseManager {
         }
 
         DatabaseTask task = new DatabaseTask();
-        task.execute(db);
+        task.execute(AlarmDatabaseClient.getInstance(context).getAppDatabase());
     }
 
-    public static void deleteAlarmRepeating(AlarmDatabase db, AlarmRepeating alarmRepeating) {
+    public static void deleteAlarmRepeating(Context context, AlarmRepeating alarmRepeating) {
         class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Void> {
             @Override
             protected Void doInBackground(AlarmDatabase... alarmDatabases) {
@@ -137,10 +137,10 @@ public class AlarmDatabaseManager {
         }
 
         DatabaseTask task = new DatabaseTask();
-        task.execute(db);
+        task.execute(AlarmDatabaseClient.getInstance(context).getAppDatabase());
     }
 
-    public static void getAlarmRepeatingByParentAlarmId(AlarmDatabase db, long parentAlarmId, PostExecuteCode code) {
+    public static void getAlarmRepeatingByParentAlarmId(Context context, long parentAlarmId, PostExecuteCode code) {
         class DatabaseTask extends AsyncTask<AlarmDatabase, Void, AlarmRepeating> {
             @Override
             protected AlarmRepeating doInBackground(AlarmDatabase... alarmDatabases) {
@@ -156,10 +156,10 @@ public class AlarmDatabaseManager {
         }
 
         DatabaseTask task = new DatabaseTask();
-        task.execute(db);
+        task.execute(AlarmDatabaseClient.getInstance(context).getAppDatabase());
     }
 
-    public static void createAlarmPuzzle(AlarmDatabase db, AlarmPuzzle alarmPuzzle, PostExecuteCode code) {
+    public static void createAlarmPuzzle(Context context, AlarmPuzzle alarmPuzzle, PostExecuteCode code) {
         class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Long> {
             @Override
             protected Long doInBackground(AlarmDatabase... alarmDatabases) {
@@ -174,10 +174,10 @@ public class AlarmDatabaseManager {
         }
 
         DatabaseTask task = new DatabaseTask();
-        task.execute(db);
+        task.execute(AlarmDatabaseClient.getInstance(context).getAppDatabase());
     }
 
-    public static void updateAlarmPuzzle(AlarmDatabase db, AlarmPuzzle alarmPuzzle) {
+    public static void updateAlarmPuzzle(Context context, AlarmPuzzle alarmPuzzle) {
         class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Void> {
             @Override
             protected Void doInBackground(AlarmDatabase... alarmDatabases) {
@@ -188,10 +188,10 @@ public class AlarmDatabaseManager {
         }
 
         DatabaseTask task = new DatabaseTask();
-        task.execute(db);
+        task.execute(AlarmDatabaseClient.getInstance(context).getAppDatabase());
     }
 
-    public static void deleteAlarmPuzzle(AlarmDatabase db, AlarmPuzzle alarmPuzzle) {
+    public static void deleteAlarmPuzzle(Context context, AlarmPuzzle alarmPuzzle) {
         class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Void> {
             @Override
             protected Void doInBackground(AlarmDatabase... alarmDatabases) {
@@ -202,10 +202,10 @@ public class AlarmDatabaseManager {
         }
 
         DatabaseTask task = new DatabaseTask();
-        task.execute(db);
+        task.execute(AlarmDatabaseClient.getInstance(context).getAppDatabase());
     }
 
-    public static void getAlarmPuzzleByParentAlarmId(AlarmDatabase db, long parentAlarmId, PostExecuteCode code) {
+    public static void getAlarmPuzzleByParentAlarmId(Context context, long parentAlarmId, PostExecuteCode code) {
         class DatabaseTask extends AsyncTask<AlarmDatabase, Void, AlarmPuzzle> {
             @Override
             protected AlarmPuzzle doInBackground(AlarmDatabase... alarmDatabases) {
@@ -221,7 +221,7 @@ public class AlarmDatabaseManager {
         }
 
         DatabaseTask task = new DatabaseTask();
-        task.execute(db);
+        task.execute(AlarmDatabaseClient.getInstance(context).getAppDatabase());
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -309,26 +309,26 @@ public class AlarmDatabaseManager {
     public static void exportDb(Context context) {
         for(Alarm alarm : alarmNotChangedList) {
                 if(!alarmList.contains(alarm)) {
-                    deleteAlarm(AlarmDatabaseClient.getInstance(context).getAppDatabase(), alarm);
+                    deleteAlarm(context, alarm);
                 }
                 else {
-                    updateAlarm(AlarmDatabaseClient.getInstance(context).getAppDatabase(), alarm);
+                    updateAlarm(context, alarm);
                 }
             }
         for(AlarmRepeating alarmRepeating : alarmRepeatingNoChangedList) {
                 if(!alarmRepeatingList.contains(alarmRepeating)) {
-                    deleteAlarmRepeating(AlarmDatabaseClient.getInstance(context).getAppDatabase(), alarmRepeating);
+                    deleteAlarmRepeating(context, alarmRepeating);
                 }
                 else {
-                    updateAlarmRepeating(AlarmDatabaseClient.getInstance(context).getAppDatabase(), alarmRepeating);
+                    updateAlarmRepeating(context, alarmRepeating);
                 }
             }
         for(AlarmPuzzle alarmPuzzle : alarmPuzzleNotChangedList) {
                 if(!alarmPuzzleList.contains(alarmPuzzle)) {
-                    deleteAlarmPuzzle(AlarmDatabaseClient.getInstance(context).getAppDatabase(), alarmPuzzle);
+                    deleteAlarmPuzzle(context, alarmPuzzle);
                 }
                 else {
-                    updateAlarmPuzzle(AlarmDatabaseClient.getInstance(context).getAppDatabase(), alarmPuzzle);
+                    updateAlarmPuzzle(context, alarmPuzzle);
                 }
             }
     }

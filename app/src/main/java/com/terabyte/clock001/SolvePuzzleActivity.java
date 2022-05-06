@@ -63,22 +63,22 @@ public class SolvePuzzleActivity extends AppCompatActivity {
                             MediaPlayerManager.alarmIdForVibrator = -1;
                         }
 
-                        AlarmDatabaseManager.getAlarmById(AlarmDatabaseClient.getInstance(getApplicationContext()).getAppDatabase(), alarmId, new PostExecuteCode() {
+                        AlarmDatabaseManager.getAlarmById(getApplicationContext(), alarmId, new PostExecuteCode() {
                             @Override
                             public void doInPostExecuteWhenWeGotAlarm(Alarm alarm) {
                                 if(alarm.isRepeat) {
                                     // TODO: 26.04.2022 here we select alarmRepeating and turn on alarmWorker again
-                                    AlarmDatabaseManager.getAlarmRepeatingByParentAlarmId(AlarmDatabaseClient.getInstance(getApplicationContext()).getAppDatabase(), alarm.id, new PostExecuteCode() {
+                                    AlarmDatabaseManager.getAlarmRepeatingByParentAlarmId(getApplicationContext(), alarm.id, new PostExecuteCode() {
                                         @Override
                                         public void doInPostExecuteWhenWeGotAlarmRepeating(AlarmRepeating alarmRepeating) {
-                                            AlarmWorkLauncher.startAlarmWorker(getApplicationContext(), SolvePuzzleActivity.this, alarm.id, alarm.hour, alarm.minute, alarmRepeating.getArrayOfBooleanDays(), AlarmWorkLauncher.getAlarmWorkerObserver(getApplicationContext(), alarm.id));
+                                            AlarmManagerLauncher.startTask(getApplicationContext(), alarm.id, alarm.hour, alarm.minute, alarmRepeating.getArrayOfBooleanDays());
                                         }
                                     });
 
                                 }
                                 else {
                                     alarm.isEnabled = false;
-                                    AlarmDatabaseManager.updateAlarm(AlarmDatabaseClient.getInstance(getApplicationContext()).getAppDatabase(), alarm);
+                                    AlarmDatabaseManager.updateAlarm(getApplicationContext(), alarm);
                                 }
 
                                 finish();

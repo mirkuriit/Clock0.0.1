@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.work.WorkInfo;
 
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,14 +67,14 @@ public class AlarmFragment extends Fragment {
 
                         boolean willWeRestartFragmentToUpdateLayout = AlarmDatabaseManager.getAlarmList().size()==0;
 
-                        AlarmDatabaseManager.createAlarm(AlarmDatabaseClient.getInstance(getContext()).getAppDatabase(), alarm, new PostExecuteCode() {
+                        AlarmDatabaseManager.createAlarm(getContext(), alarm, new PostExecuteCode() {
                             @Override
                             public void doInPostExecuteWhenWeGotIdOfCreatedAlarm(Long createdAlarmId) {
                                 //here we start work manager and fill recyclerView again
                                 alarm.id = createdAlarmId;
                                 AlarmDatabaseManager.updateAlarmList(alarm);
 
-                                AlarmWorkLauncher.startAlarmWorker(getContext(), AlarmFragment.this.getActivity(), createdAlarmId, alarm.hour, alarm.minute, AlarmWorkLauncher.getAlarmWorkerObserver(getContext(), createdAlarmId));
+                                AlarmManagerLauncher.startTask(getContext(), alarm.id, alarm.hour, alarm.minute);
 
                                 if(willWeRestartFragmentToUpdateLayout) {
                                     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
@@ -90,7 +91,7 @@ public class AlarmFragment extends Fragment {
                     }
                 };
 
-                TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), listener, Calendar.getInstance().get(Calendar.HOUR), Calendar.getInstance().get(Calendar.MINUTE), true);
+                TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), listener, Calendar.getInstance().get(Calendar.HOUR), Calendar.getInstance().get(Calendar.MINUTE), DateFormat.is24HourFormat(getContext()));
                 timePickerDialog.show();
             }
         });

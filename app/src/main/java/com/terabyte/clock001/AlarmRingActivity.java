@@ -5,16 +5,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.os.VibratorManager;
 import android.provider.MediaStore;
+import android.text.format.DateFormat;
+import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
+import java.util.Calendar;
+
 public class AlarmRingActivity extends AppCompatActivity {
+    TimeMonitorTask timeMonitorTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,10 +36,20 @@ public class AlarmRingActivity extends AppCompatActivity {
         TextView textAlarmRingTime = findViewById(R.id.textAlarmRingTime);
         TextView textAlarmRingDescription = findViewById(R.id.textAlarmRingDescription);
 
-        AlarmDatabaseManager.getAlarmById(AlarmDatabaseClient.getInstance(getApplicationContext()).getAppDatabase(), alarmId, new PostExecuteCode() {
+        AlarmDatabaseManager.getAlarmById(getApplicationContext(), alarmId, new PostExecuteCode() {
             @Override
             public void doInPostExecuteWhenWeGotAlarm(Alarm alarm) {
-                textAlarmRingTime.setText(String.format("%02d:%02d", alarm.hour, alarm.minute));
+
+                Calendar calendar = Calendar.getInstance();
+                if(DateFormat.is24HourFormat(getApplicationContext())) {
+                    textAlarmRingTime.setText(String.format("%02d:%02d", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE)));
+                }
+                else {
+                    textAlarmRingTime.setText(String.format("%02d:%02d", calendar.get(Calendar.HOUR), calendar.get(Calendar.MINUTE)));
+                }
+                timeMonitorTask = new TimeMonitorTask(textAlarmRingTime);
+                timeMonitorTask.execute();
+
                 textAlarmRingDescription.setText(alarm.description);
 
                 if(MediaPlayerManager.mediaPlayer==null) {
@@ -66,7 +84,7 @@ public class AlarmRingActivity extends AppCompatActivity {
                     buttonAlarmDismiss.setVisibility(View.GONE);
                     buttonAlarmDelay.setVisibility(View.GONE);
 
-                    AlarmDatabaseManager.getAlarmPuzzleByParentAlarmId(AlarmDatabaseClient.getInstance(getApplicationContext()).getAppDatabase(), alarm.id, new PostExecuteCode() {
+                    AlarmDatabaseManager.getAlarmPuzzleByParentAlarmId(getApplicationContext(), alarm.id, new PostExecuteCode() {
                         @Override
                         public void doInPostExecuteWhenWeGotAlarmPuzzle(AlarmPuzzle alarmPuzzle) {
                             buttonAlarmSolvePuzzle.setOnClickListener(new View.OnClickListener() {
@@ -104,17 +122,17 @@ public class AlarmRingActivity extends AppCompatActivity {
 
                             if(alarm.isRepeat) {
                                 // TODO: 26.04.2022 here we select alarmRepeating and turn on alarmWorker again
-                                AlarmDatabaseManager.getAlarmRepeatingByParentAlarmId(AlarmDatabaseClient.getInstance(getApplicationContext()).getAppDatabase(), alarm.id, new PostExecuteCode() {
+                                AlarmDatabaseManager.getAlarmRepeatingByParentAlarmId(getApplicationContext(), alarm.id, new PostExecuteCode() {
                                     @Override
                                     public void doInPostExecuteWhenWeGotAlarmRepeating(AlarmRepeating alarmRepeating) {
-                                        AlarmWorkLauncher.startAlarmWorker(getApplicationContext(), AlarmRingActivity.this, alarm.id, alarm.hour, alarm.minute, alarmRepeating.getArrayOfBooleanDays(), AlarmWorkLauncher.getAlarmWorkerObserver(getApplicationContext(), alarm.id));
+                                        AlarmManagerLauncher.startTask(getApplicationContext(), alarm.id, alarm.hour, alarm.minute, alarmRepeating.getArrayOfBooleanDays());
                                     }
                                 });
 
                             }
                             else {
                                 alarm.isEnabled = false;
-                                AlarmDatabaseManager.updateAlarm(AlarmDatabaseClient.getInstance(getApplicationContext()).getAppDatabase(), alarm);
+                                AlarmDatabaseManager.updateAlarm(getApplicationContext(), alarm);
                             }
                             
                             finish();
@@ -136,11 +154,11 @@ public class AlarmRingActivity extends AppCompatActivity {
                             }
 
                             // TODO: 27.04.2022 here we turn off alarm but we launch alarmWorker to five minutes +
-                            AlarmWorkLauncher.startAlarmWorker(getApplicationContext(), AlarmRingActivity.this, alarm.id, AlarmWorkLauncher.getAlarmWorkerObserver(getApplicationContext(), alarm.id));
+                            AlarmManagerLauncher.startTask(getApplicationContext(), alarm.id);
                             alarm.isEnabled = false;
 
 
-                            AlarmDatabaseManager.updateAlarm(AlarmDatabaseClient.getInstance(getApplicationContext()).getAppDatabase(), alarm);
+                            AlarmDatabaseManager.updateAlarm(getApplicationContext(), alarm);
                             finish();
                         }
                     });
@@ -150,4 +168,56 @@ public class AlarmRingActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        //actually the probability of null value in timeMonitorTask field is very small. But I
+        //want to check everything!
+        if(timeMonitorTask!=null) {
+            timeMonitorTask.finishThread();
+        }
+        super.onDestroy();
+    }
+
+    class TimeMonitorTask extends AsyncTask<Void, Calendar, Void> {
+        private boolean running = true;
+        private TextView textAlarmRingTime;
+
+        public TimeMonitorTask(TextView textAlarmRingTime) {
+            this.textAlarmRingTime = textAlarmRingTime;
+        }
+
+        @Override
+        protected Void doInBackground(Void ...voids) {
+            while(running) {
+                try {
+                    Thread.sleep(1000*60);
+                } catch (InterruptedException e) {
+
+                }
+                publishProgress(Calendar.getInstance());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Calendar... values) {
+            Calendar calendar = values[0];
+            if(DateFormat.is24HourFormat(getApplicationContext())) {
+                textAlarmRingTime.setText(String.format("%02d:%02d", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE)));
+            }
+            else {
+                textAlarmRingTime.setText(String.format("%02d:%02d", calendar.get(Calendar.HOUR), calendar.get(Calendar.MINUTE)));
+            }
+        }
+
+        public void finishThread() {
+            running = false;
+        }
+    }
 }
