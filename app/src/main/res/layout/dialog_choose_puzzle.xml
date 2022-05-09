@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp">
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/radioGroupAlarmPuzzles"
+                android:animateLayoutChanges="true">
+                <RadioButton
+                    android:id="@+id/radioFirstAlarmPuzzleDifficulty"
+                    style="@style/styleDescription1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/first_degree_difficulty"
+
+                    />
+                <TextView
+                    android:id="@+id/textFirstAlarmPuzzleDifficulty"
+                    style="@style/styleDescription1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/first_degree_difficulty_description" />
+
+                <RadioButton
+                    android:id="@+id/radioSecondAlarmPuzzleDifficulty"
+                    style="@style/styleDescription1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/second_degree_difficulty"
+                    android:drawableRight="@drawable/ic_apply"/>
+                <TextView
+                    android:id="@+id/textSecondAlarmPuzzleDifficulty"
+                    style="@style/styleDescription1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/second_degree_difficulty_description" />
+
+                <RadioButton
+                    android:id="@+id/radioThirdAlarmPuzzleDifficulty"
+                    style="@style/styleDescription1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/third_degree_difficulty"
+                    android:drawableRight="@drawable/ic_apply"/>
+                <TextView
+                    android:id="@+id/textThirdAlarmPuzzleDifficulty"
+                    style="@style/styleDescription1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/third_degree_difficulty_description" />
+
+                <RadioButton
+                    android:id="@+id/radioFourthAlarmPuzzleDifficulty"
+                    style="@style/styleDescription1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fourth_degree_difficulty"
+                    android:drawableRight="@drawable/ic_apply"/>
+                <TextView
+                    android:id="@+id/textFourthAlarmPuzzleDifficulty"
+                    style="@style/styleDescription1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/fourth_degree_difficulty_description" />
+            </RadioGroup>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</FrameLayout>

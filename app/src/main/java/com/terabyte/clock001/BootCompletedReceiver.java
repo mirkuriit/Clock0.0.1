@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.provider.ContactsContract;
+import android.util.Pair;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BootCompletedReceiver extends BroadcastReceiver {
@@ -21,6 +23,8 @@ public class BootCompletedReceiver extends BroadcastReceiver {
     class DatabaseTask extends AsyncTask<AlarmDatabase, Void, Void> {
         private Context context;
         private PendingResult pendingResult;
+        private List<Alarm> enabledAlarmList;
+        private List<AlarmRepeating> alarmRepeatingList;
 
         public DatabaseTask(Context context, PendingResult pendingResult) {
             this.context = context;
@@ -30,8 +34,8 @@ public class BootCompletedReceiver extends BroadcastReceiver {
         @Override
         protected Void doInBackground(AlarmDatabase... alarmDatabases) {
             AlarmDatabase db = alarmDatabases[0];
-            List<Alarm> enabledAlarmList = db.alarmDao().getAllAlarmsByEnabled(true);
-            List<AlarmRepeating> alarmRepeatingList = db.alarmRepeatingDao().getAll();
+            enabledAlarmList = db.alarmDao().getAllAlarmsByEnabled(true);
+            alarmRepeatingList = db.alarmRepeatingDao().getAll();
 
             for(Alarm alarm : enabledAlarmList) {
                 if(alarm.isRepeat) {

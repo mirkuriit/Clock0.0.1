@@ -46,6 +46,13 @@
         app:layout_constraintTop_toBottomOf="@+id/textAlarmRingHeader"
         android:text="there is some description of our alarm"/>
 
+    <com.terabyte.clock001.SwipeButton
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonAlarmSolvePuzzle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <Button
         android:id="@+id/buttonAlarmSolvePuzzle"
         android:layout_width="wrap_content"

@@ -75,7 +75,6 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
         final boolean isExpanded = holder.getAdapterPosition()==mExpandedPosition;
         holder.constraintAlarmListExtended.setVisibility(isExpanded?View.VISIBLE:View.GONE);
         holder.itemView.setActivated(isExpanded);
-
         if (isExpanded) {
             previousExpandedPosition = holder.getAdapterPosition();
         }
@@ -116,13 +115,9 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
         holder.buttonAlarmListExtendParams.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View buttonAlarmListExtendParams) {
-                //animation of our button
-
                 mExpandedPosition = isExpanded ? -1:holder.getAdapterPosition();
                 notifyItemChanged(previousExpandedPosition);
                 notifyItemChanged(holder.getAdapterPosition());
-
-
             }
         });
 
@@ -131,9 +126,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
             holder.buttonAlarmListChoosePuzzleType.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(context, ChoosePuzzleActivity.class);
-                    intent.putExtra(Const.INTENT_KEY_ALARM_ID, alarm.id);
-                    context.startActivity(intent);
+                    ChoosePuzzleDialog dialog = new ChoosePuzzleDialog(alarm.id);
+                    dialog.show(fragment.getActivity().getSupportFragmentManager(), "choosePuzzleDialog");
                 }
             });
         } else {
@@ -189,6 +183,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
                             if (alarm.isEnabled) {
                                 AlarmManagerLauncher.stopTask(context, alarm.id);
                                 AlarmManagerLauncher.startTask(context, alarm.id, alarm.hour, alarm.minute);
+
                             }
                         } else {
                             holder.textAlarmListDates.setText(AlarmRepeatUITextBuilder.getStringByDaysArray(context, alarmRepeating.getArrayOfBooleanDays()));
@@ -198,6 +193,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
                                 AlarmManagerLauncher.startTask(context, alarm.id, alarm.hour, alarm.minute, alarmRepeating.getArrayOfBooleanDays());
                             }
                         }
+
+
                     }
                 });
             }
@@ -269,6 +266,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
                                             if (alarm.isEnabled) {
                                                 AlarmManagerLauncher.stopTask(context, alarm.id);
                                                 AlarmManagerLauncher.startTask(context, alarm.id, alarm.hour, alarm.minute);
+
                                             }
                                         } else {
                                             holder.textAlarmListDates.setText(AlarmRepeatUITextBuilder.getStringByDaysArray(context, repeating.getArrayOfBooleanDays()));
@@ -302,6 +300,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
                 }
 
                 alarm.isRepeat = b;
+
             }
         });
 
@@ -350,9 +349,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
                             holder.buttonAlarmListChoosePuzzleType.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    Intent intent = new Intent(context, ChoosePuzzleActivity.class);
-                                    intent.putExtra(Const.INTENT_KEY_ALARM_ID, alarm.id);
-                                    context.startActivity(intent);
+                                    ChoosePuzzleDialog dialog = new ChoosePuzzleDialog(alarm.id);
+                                    dialog.show(fragment.getActivity().getSupportFragmentManager(), "choosePuzzleDialog");
                                 }
                             });
                         }
@@ -362,6 +360,14 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
                     AlarmPuzzle alarmPuzzle = AlarmDatabaseManager.getAlarmPuzzleFromListByParentAlarmId(alarm.id);
                     AlarmDatabaseManager.getAlarmPuzzleList().remove(alarmPuzzle);
                 }
+            }
+        });
+
+        holder.buttonAlarmListSound.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ChooseSoundDialog dialog = new ChooseSoundDialog(alarm.id);
+                dialog.show(fragment.getActivity().getSupportFragmentManager(), "chooseSoundDialog");
             }
         });
 

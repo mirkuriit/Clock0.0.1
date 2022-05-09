@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         if(AlarmDatabaseManager.getAlarmList()==null) {
-            AlarmDatabaseManager.importDb(AlarmDatabaseClient.getInstance(getApplicationContext()).getAppDatabase(), new PostExecuteCode() {
+            AlarmDatabaseManager.importDb(getApplicationContext(), new PostExecuteCode() {
                 @Override
                 public void doInPostExecute() {
                     actionsInOnCreate();
@@ -36,17 +36,19 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
         AlarmDatabaseManager.exportDb(getApplicationContext());
     }
 
 
     private void actionsInOnCreate() {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.frameLayoutForFragments, new AlarmFragment());
-        fragmentTransaction.commit();
+        if(fragmentManager.findFragmentById(R.id.frameLayoutForFragments)==null) {
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add(R.id.frameLayoutForFragments, new AlarmFragment());
+            fragmentTransaction.commit();
+        }
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {

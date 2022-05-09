@@ -62,8 +62,8 @@ public class AlarmFragment extends Fragment {
                     public void onTimeSet(TimePicker timePicker, int i, int i1) {
                         //ternary operator
                         Alarm alarm = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ?
-                                new Alarm(timePicker.getHour(), timePicker.getMinute(), "", true, false, true, false) :
-                                new Alarm(timePicker.getCurrentHour(), timePicker.getCurrentMinute(), "", true, false, true, false);
+                                new Alarm(timePicker.getHour(), timePicker.getMinute(), "",Alarm.getDefaultSoundUriString(), true, false, true, false) :
+                                new Alarm(timePicker.getCurrentHour(), timePicker.getCurrentMinute(), "", Alarm.getDefaultSoundUriString(), true, false, true, false);
 
                         boolean willWeRestartFragmentToUpdateLayout = AlarmDatabaseManager.getAlarmList().size()==0;
 

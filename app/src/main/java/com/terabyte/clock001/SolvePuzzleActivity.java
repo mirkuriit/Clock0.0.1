@@ -23,6 +23,7 @@ public class SolvePuzzleActivity extends AppCompatActivity {
         TextView textSolvePuzzlePuzzle = findViewById(R.id.textSolvePuzzlePuzzle);
         TextView textSolvePuzzleInstruction = findViewById(R.id.textSolvePuzzleInstruction);
         EditText editSolvePuzzleAnswer = findViewById(R.id.editSolvePuzzleAnswer);
+        Button buttonSolvePuzzleSendAnswer = findViewById(R.id.buttonSolvePuzzleSendAnswer);
 
         long alarmId = getIntent().getExtras().getLong(Const.INTENT_KEY_ALARM_ID);
         int hardcoreLevel = getIntent().getExtras().getInt(Const.INTENT_KEY_HARDCORE_LEVEL);
@@ -43,48 +44,54 @@ public class SolvePuzzleActivity extends AppCompatActivity {
                 break;
         }
 
-        Button buttonSolvePuzzleSendAnswer = findViewById(R.id.buttonSolvePuzzleSendAnswer);
+
         buttonSolvePuzzleSendAnswer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
                     int answer = Integer.parseInt(editSolvePuzzleAnswer.getText().toString());
                     if(answer == pair.second) {
-                        // TODO: 30.04.2022 here we turn off alarm and look if there's any repeating
-                        if(MediaPlayerManager.mediaPlayer!=null & MediaPlayerManager.alarmIdForMediaPlayer==alarmId) {
-                            MediaPlayerManager.mediaPlayer.stop();
-                            MediaPlayerManager.mediaPlayer = null;
-                            MediaPlayerManager.alarmIdForMediaPlayer = -1;
-                        }
+                        //here we turn off alarm and look if there's any repeating
+                        stopMediaPlayer(alarmId);
+                        stopVibration(alarmId);
 
-                        if(MediaPlayerManager.vibrator!=null & MediaPlayerManager.alarmIdForVibrator==alarmId) {
-                            MediaPlayerManager.vibrator.cancel();
-                            MediaPlayerManager.vibrator = null;
-                            MediaPlayerManager.alarmIdForVibrator = -1;
-                        }
+                        if(AlarmDatabaseManager.getAlarmList()!=null) {
+                            Alarm alarm = AlarmDatabaseManager.getAlarmFromListById(alarmId);
+                            if(alarm.isRepeat) {
+                                AlarmRepeating alarmRepeating = AlarmDatabaseManager.getAlarmRepeatingFromListByParentAlarmId(alarmId);
+                                AlarmManagerLauncher.startTask(getApplicationContext(), alarm.id, alarm.hour, alarm.minute, alarmRepeating.getArrayOfBooleanDays());
 
-                        AlarmDatabaseManager.getAlarmById(getApplicationContext(), alarmId, new PostExecuteCode() {
-                            @Override
-                            public void doInPostExecuteWhenWeGotAlarm(Alarm alarm) {
-                                if(alarm.isRepeat) {
-                                    // TODO: 26.04.2022 here we select alarmRepeating and turn on alarmWorker again
-                                    AlarmDatabaseManager.getAlarmRepeatingByParentAlarmId(getApplicationContext(), alarm.id, new PostExecuteCode() {
-                                        @Override
-                                        public void doInPostExecuteWhenWeGotAlarmRepeating(AlarmRepeating alarmRepeating) {
-                                            AlarmManagerLauncher.startTask(getApplicationContext(), alarm.id, alarm.hour, alarm.minute, alarmRepeating.getArrayOfBooleanDays());
-                                        }
-                                    });
-
-                                }
-                                else {
-                                    alarm.isEnabled = false;
-                                    AlarmDatabaseManager.updateAlarm(getApplicationContext(), alarm);
-                                }
-
-                                finish();
                             }
-                        });
+                            else {
+                                alarm.isEnabled = false;
+                                AlarmDatabaseManager.updateAlarm(getApplicationContext(), alarm);
+                            }
 
+                            finish();
+                        }
+                        else {
+                            AlarmDatabaseManager.getAlarmById(getApplicationContext(), alarmId, new PostExecuteCode() {
+                                @Override
+                                public void doInPostExecuteWhenWeGotAlarm(Alarm alarm) {
+                                    if(alarm.isRepeat) {
+                                        // TODO: 26.04.2022 here we select alarmRepeating and turn on alarmWorker again
+                                        AlarmDatabaseManager.getAlarmRepeatingByParentAlarmId(getApplicationContext(), alarm.id, new PostExecuteCode() {
+                                            @Override
+                                            public void doInPostExecuteWhenWeGotAlarmRepeating(AlarmRepeating alarmRepeating) {
+                                                AlarmManagerLauncher.startTask(getApplicationContext(), alarm.id, alarm.hour, alarm.minute, alarmRepeating.getArrayOfBooleanDays()); // FIXME: 08.05.2022 here we need AlarmList and AlarmRepeatingList but we do'nt have it
+                                            }
+                                        });
+
+                                    }
+                                    else {
+                                        alarm.isEnabled = false;
+                                        AlarmDatabaseManager.updateAlarm(getApplicationContext(), alarm);
+                                    }
+
+                                    finish();
+                                }
+                            });
+                        }
                     }
                     else {
                         showSnackIncorrectAnswer(view);
@@ -100,5 +107,21 @@ public class SolvePuzzleActivity extends AppCompatActivity {
 
     private void showSnackIncorrectAnswer(View view) {
         Snackbar.make(view, getResources().getString(R.string.incorrect_answer), Snackbar.LENGTH_LONG).show();
+    }
+
+    private void stopMediaPlayer(long alarmId) {
+        if(MediaPlayerManager.mediaPlayer!=null & MediaPlayerManager.alarmIdForMediaPlayer==alarmId) {
+            MediaPlayerManager.mediaPlayer.stop();
+            MediaPlayerManager.mediaPlayer = null;
+            MediaPlayerManager.alarmIdForMediaPlayer = -1;
+        }
+    }
+
+    private void stopVibration(long alarmId) {
+        if(MediaPlayerManager.vibrator!=null & MediaPlayerManager.alarmIdForVibrator==alarmId) {
+            MediaPlayerManager.vibrator.cancel();
+            MediaPlayerManager.vibrator = null;
+            MediaPlayerManager.alarmIdForVibrator = -1;
+        }
     }
 }

@@ -37,4 +37,17 @@
     <string name="difficulty_instruction1">evaluate math expression</string>
     <string name="difficulty_instruction2">find the minimal answer of equation</string>
     <string name="incorrect_answer">Incorrect answer!</string>
+    <string name="alarm_notification_channel_description">Notifications about all enabled alarms</string>
+    <string name="alarm_notification_channel_name">Alarm notifications</string>
+    <string name="alarm_notification_content_title">There are some enabled alarms</string>
+    <string name="choose_alarm_sound">Choose alarm sound</string>
+    <string name="choose_custom_sound">Choose custom sound</string>
+
+    <string name="alarm_sound_beep_beep">Beep-beep</string>
+    <string name="alarm_sound_egor_track">Egor track</string>
+    <string name="alarm_sound_happy_bells">Happy bells</string>
+    <string name="alarm_sound_oxygen">Oxygen</string>
+    <string name="alarm_sound_platinum">Platinum</string>
+    <string name="alarm_sound_silver_smoke">Silver smoke</string>
+    <string name="alarm_sound_walk_in_forest">Walk in forest</string>
 </resources>

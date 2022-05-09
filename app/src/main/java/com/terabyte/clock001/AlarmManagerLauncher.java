@@ -5,7 +5,11 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AlarmManagerLauncher {
+
     public static void startTask(Context context, long alarmId, int hour, int minute) {
         Intent preparingIntent = new Intent(context, AlarmRingActivity.class);
         preparingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -17,6 +21,7 @@ public class AlarmManagerLauncher {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         long mills = DateManager.getMillsForAlarm(hour, minute);
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+mills, pendingIntent);
+
     }
 
     public static void startTask(Context context, long alarmId, int hour, int minute, boolean[] days) {
@@ -30,6 +35,7 @@ public class AlarmManagerLauncher {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         long mills = DateManager.getMillsForAlarm(hour, minute, days);
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+mills, pendingIntent);
+
     }
 
     public static void startTask(Context context, long alarmId) {

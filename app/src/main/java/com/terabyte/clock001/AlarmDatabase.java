@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase;
  * our class has to extend RoomDatabase and have abstract methods that returns %EntityName%Dao
  */
 
-@Database(entities = {Alarm.class, AlarmRepeating.class, AlarmPuzzle.class}, version = 4)
+@Database(entities = {Alarm.class, AlarmRepeating.class, AlarmPuzzle.class}, version = 5)
 public abstract class AlarmDatabase extends RoomDatabase {
     public abstract AlarmDao alarmDao();
 

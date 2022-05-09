@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/radioGroupAlarmSounds">
+            <RadioButton
+                android:id="@+id/radioAlarmSoundEgorTrack"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/alarm_sound_egor_track" />
+            <RadioButton
+                android:id="@+id/radioAlarmSoundBeepBeep"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/alarm_sound_beep_beep"/>
+            <RadioButton
+                android:id="@+id/radioAlarmSoundHappyBells"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/alarm_sound_happy_bells"/>
+            <RadioButton
+                android:id="@+id/radioAlarmSoundOxygen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/alarm_sound_oxygen"/>
+            <RadioButton
+                android:id="@+id/radioAlarmSoundPlatinum"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/alarm_sound_platinum"/>
+            <RadioButton
+                android:id="@+id/radioAlarmSoundSilverSmoke"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/alarm_sound_silver_smoke"/>
+            <RadioButton
+                android:id="@+id/radioAlarmSoundWalkInForest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/alarm_sound_walk_in_forest"/>
+
+        </RadioGroup>
+    </ScrollView>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:id="@+id/buttonChooseCustomSound"
+        android:text="@string/choose_custom_sound"/>
+
+</LinearLayout>

@@ -20,9 +20,14 @@
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/drawable/ic_first_difficutly.xml" value="0.3828125" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/drawable/ic_puzzle.xml" value="0.3614583333333333" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/drawable/ic_sound.xml" value="0.3828125" />
+        <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/drawable/swipe_button.xml" value="0.3828125" />
+        <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/drawable/swipe_button_background.xml" value="0.1" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/layout/activity_alarm_ring.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/layout/activity_choose_puzzle.xml" value="0.33" />
+        <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/layout/activity_main.xml" value="0.3494791666666667" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/layout/activity_solve_puzzle.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/layout/dialog_choose_puzzle.xml" value="0.35104166666666664" />
+        <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/layout/dialog_choose_sound.xml" value="0.3046875" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/layout/fragment_alarm.xml" value="0.35104166666666664" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/layout/fragment_alarm_no_alarms.xml" value="0.3078125" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/layout/list_alarms.xml" value="0.31979166666666664" />
