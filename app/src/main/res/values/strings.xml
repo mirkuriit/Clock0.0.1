@@ -51,4 +51,6 @@
     <string name="alarm_sound_silver_smoke">Silver smoke</string>
     <string name="alarm_sound_walk_in_forest">Walk in forest</string>
     <string name="alarm_sound_custom">custom sound</string>
+    <string name="start">start</string>
+    <string name="reset">reset</string>
 </resources>

@@ -1,14 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TimerFragment">
+    tools:context=".MainActivity">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="timer will be here" />
+        android:id="@+id/text_view_countdown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="95dp"
+        android:text="00:00:00"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="50sp" />
 
-</FrameLayout>
+    <Button
+        android:id="@+id/button_start_pause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/text_view_countdown"
+        android:text="@string/start"
+        android:visibility="visible"/>
+
+    <Button
+        android:id="@+id/button_reset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_view_countdown"
+        android:padding="10dp"
+        android:text="@string/reset"
+        android:visibility="invisible" />
+</RelativeLayout>
