@@ -40,7 +40,7 @@ public class AlarmManagerLauncher {
 
     public static void startTask(Context context, long alarmId) {
         Intent preparingIntent = new Intent(context, AlarmRingActivity.class);
-        preparingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        preparingIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         preparingIntent.putExtra(Const.INTENT_KEY_ALARM_ID, alarmId);
 
 

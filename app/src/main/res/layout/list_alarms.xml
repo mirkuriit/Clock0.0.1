@@ -142,7 +142,7 @@
             android:layout_margin="5dp"
             android:backgroundTint="@color/white"
             android:drawableLeft="@drawable/ic_sound"
-            android:text="some sound"
+            android:text="@string/choose_alarm_sound"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="@+id/checkBoxAlarmListVibration"
             app:layout_constraintEnd_toStartOf="@+id/checkBoxAlarmListVibration"

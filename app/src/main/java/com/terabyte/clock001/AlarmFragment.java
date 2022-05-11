@@ -72,7 +72,7 @@ public class AlarmFragment extends Fragment {
                             public void doInPostExecuteWhenWeGotIdOfCreatedAlarm(Long createdAlarmId) {
                                 //here we start work manager and fill recyclerView again
                                 alarm.id = createdAlarmId;
-                                AlarmDatabaseManager.updateAlarmList(alarm);
+                                AlarmDatabaseManager.getAlarmList().add(alarm);
 
                                 AlarmManagerLauncher.startTask(getContext(), alarm.id, alarm.hour, alarm.minute);
 

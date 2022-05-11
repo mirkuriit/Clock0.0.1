@@ -19,6 +19,8 @@ import java.util.Calendar;
 
 public class AlarmRingActivity extends AppCompatActivity {
     TimeMonitorTask timeMonitorTask;
+    TextView textAlarmRingTime, textAlarmRingDescription;
+    Button buttonAlarmSolvePuzzle, buttonAlarmDelay, buttonAlarmDismiss;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,11 +31,7 @@ public class AlarmRingActivity extends AppCompatActivity {
 
         long alarmId = getIntent().getExtras().getLong(Const.INTENT_KEY_ALARM_ID);
 
-        TextView textAlarmRingTime = findViewById(R.id.textAlarmRingTime);
-        TextView textAlarmRingDescription = findViewById(R.id.textAlarmRingDescription);
-        Button buttonAlarmSolvePuzzle = findViewById(R.id.buttonAlarmSolvePuzzle);
-        Button buttonAlarmDelay = findViewById(R.id.buttonAlarmDelay);
-        Button buttonAlarmDismiss = findViewById(R.id.buttonAlarmDismiss);
+        initViewFields();
 
         if(AlarmDatabaseManager.getAlarmList()!=null) {
             Alarm alarm = AlarmDatabaseManager.getAlarmFromListById(alarmId);
@@ -41,57 +39,40 @@ public class AlarmRingActivity extends AppCompatActivity {
             initMediaPlayer(alarm);
             initVibration(alarm);
 
+            //here we turn off or turn on again alarm (it depends on alarmRepeating)
+            if(savedInstanceState==null) {
+                if(alarm.isRepeat) {
+                    AlarmRepeating alarmRepeating = AlarmDatabaseManager.getAlarmRepeatingFromListByParentAlarmId(alarm.id);
+                    AlarmManagerLauncher.startTask(getApplicationContext(), alarm.id, alarm.hour, alarm.minute, alarmRepeating.getArrayOfBooleanDays());
+                }
+                else {
+                    alarm.isEnabled = false;
+                    AlarmDatabaseManager.updateAlarm(getApplicationContext(), alarm);
+                }
+            }
+
             textAlarmRingDescription.setText(alarm.description);
 
+            setButtonsVisibilityByIsPuzzle(alarm.isPuzzle);
             if(alarm.isPuzzle) {
-                buttonAlarmSolvePuzzle.setVisibility(View.VISIBLE);
-                buttonAlarmDismiss.setVisibility(View.GONE);
-                buttonAlarmDelay.setVisibility(View.GONE);
-
-                AlarmDatabaseManager.getAlarmPuzzleByParentAlarmId(getApplicationContext(), alarm.id, new PostExecuteCode() {
+                AlarmPuzzle alarmPuzzle = AlarmDatabaseManager.getAlarmPuzzleFromListByParentAlarmId(alarm.id);
+                buttonAlarmSolvePuzzle.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void doInPostExecuteWhenWeGotAlarmPuzzle(AlarmPuzzle alarmPuzzle) {
-                        buttonAlarmSolvePuzzle.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Intent intent = new Intent(getApplicationContext(), SolvePuzzleActivity.class);
-                                intent.putExtra(Const.INTENT_KEY_HARDCORE_LEVEL, alarmPuzzle.hardcoreLevel);
-                                intent.putExtra(Const.INTENT_KEY_ALARM_ID, alarm.id);
-                                startActivity(intent);
-                            }
-                        });
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getApplicationContext(), SolvePuzzleActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                        intent.putExtra(Const.INTENT_KEY_HARDCORE_LEVEL, alarmPuzzle.hardcoreLevel);
+                        intent.putExtra(Const.INTENT_KEY_ALARM_ID, alarm.id);
+                        startActivity(intent);
                     }
                 });
-
             }
             else {
-                buttonAlarmSolvePuzzle.setVisibility(View.GONE);
-                buttonAlarmDismiss.setVisibility(View.VISIBLE);
-                buttonAlarmDelay.setVisibility(View.VISIBLE);
-
                 buttonAlarmDismiss.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         stopMediaPlayer(alarm);
                         stopVibration(alarm);
-                        if(alarm.isRepeat) {
-                            if(AlarmDatabaseManager.getAlarmList()!=null) {
-                                AlarmRepeating alarmRepeating = AlarmDatabaseManager.getAlarmRepeatingFromListByParentAlarmId(alarm.id);
-                                AlarmManagerLauncher.startTask(getApplicationContext(), alarm.id, alarm.hour, alarm.minute, alarmRepeating.getArrayOfBooleanDays());
-                            }
-                            else {
-                                AlarmDatabaseManager.getAlarmRepeatingByParentAlarmId(getApplicationContext(), alarm.id, new PostExecuteCode() {
-                                    @Override
-                                    public void doInPostExecuteWhenWeGotAlarmRepeating(AlarmRepeating alarmRepeating) {
-                                        AlarmManagerLauncher.startTask(getApplicationContext(), alarm.id, alarm.hour, alarm.minute, alarmRepeating.getArrayOfBooleanDays()); // FIXME: 08.05.2022 here we also don't have alarmList and alarmRepeatingList.
-                                    }
-                                });
-                            }
-                        }
-                        else {
-                            alarm.isEnabled = false;
-                            AlarmDatabaseManager.updateAlarm(getApplicationContext(), alarm);
-                        }
                         finish();
                     }
                 });
@@ -100,12 +81,8 @@ public class AlarmRingActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         stopMediaPlayer(alarm);
                         stopVibration(alarm);
-                        //here we turn off alarm but we launch alarmWorker to five minutes +
+                        //here we launch alarmWorker to five minutes +
                         AlarmManagerLauncher.startTask(getApplicationContext(), alarm.id);
-
-                        alarm.isEnabled = false;
-                        AlarmDatabaseManager.updateAlarm(getApplicationContext(), alarm);
-
                         finish();
                     }
                 });
@@ -119,13 +96,26 @@ public class AlarmRingActivity extends AppCompatActivity {
                     initMediaPlayer(alarm);
                     initVibration(alarm);
 
+                    if(savedInstanceState==null) {
+                        if(alarm.isRepeat) {
+                            AlarmDatabaseManager.getAlarmRepeatingByParentAlarmId(getApplicationContext(), alarm.id, new PostExecuteCode() {
+                                @Override
+                                public void doInPostExecuteWhenWeGotAlarmRepeating(AlarmRepeating alarmRepeating) {
+                                    AlarmManagerLauncher.startTask(getApplicationContext(), alarm.id, alarm.hour, alarm.minute, alarmRepeating.getArrayOfBooleanDays());
+                                }
+                            });
+
+                        }
+                        else {
+                            alarm.isEnabled = false;
+                            AlarmDatabaseManager.updateAlarm(getApplicationContext(), alarm);
+                        }
+                    }
+
                     textAlarmRingDescription.setText(alarm.description);
 
+                    setButtonsVisibilityByIsPuzzle(alarm.isPuzzle);
                     if(alarm.isPuzzle) {
-                        buttonAlarmSolvePuzzle.setVisibility(View.VISIBLE);
-                        buttonAlarmDismiss.setVisibility(View.GONE);
-                        buttonAlarmDelay.setVisibility(View.GONE);
-
                         AlarmDatabaseManager.getAlarmPuzzleByParentAlarmId(getApplicationContext(), alarm.id, new PostExecuteCode() {
                             @Override
                             public void doInPostExecuteWhenWeGotAlarmPuzzle(AlarmPuzzle alarmPuzzle) {
@@ -143,33 +133,11 @@ public class AlarmRingActivity extends AppCompatActivity {
 
                     }
                     else {
-                        buttonAlarmSolvePuzzle.setVisibility(View.GONE);
-                        buttonAlarmDismiss.setVisibility(View.VISIBLE);
-                        buttonAlarmDelay.setVisibility(View.VISIBLE);
-
                         buttonAlarmDismiss.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 stopMediaPlayer(alarm);
                                 stopVibration(alarm);
-                                if(alarm.isRepeat) {
-                                    if(AlarmDatabaseManager.getAlarmList()!=null) {
-                                        AlarmRepeating alarmRepeating = AlarmDatabaseManager.getAlarmRepeatingFromListByParentAlarmId(alarm.id);
-                                        AlarmManagerLauncher.startTask(getApplicationContext(), alarm.id, alarm.hour, alarm.minute, alarmRepeating.getArrayOfBooleanDays());
-                                    }
-                                    else {
-                                        AlarmDatabaseManager.getAlarmRepeatingByParentAlarmId(getApplicationContext(), alarm.id, new PostExecuteCode() {
-                                            @Override
-                                            public void doInPostExecuteWhenWeGotAlarmRepeating(AlarmRepeating alarmRepeating) {
-                                                AlarmManagerLauncher.startTask(getApplicationContext(), alarm.id, alarm.hour, alarm.minute, alarmRepeating.getArrayOfBooleanDays());
-                                            }
-                                        });
-                                    }
-                                }
-                                else {
-                                    alarm.isEnabled = false;
-                                    AlarmDatabaseManager.updateAlarm(getApplicationContext(), alarm);
-                                }
                                 finish();
                             }
                         });
@@ -178,12 +146,8 @@ public class AlarmRingActivity extends AppCompatActivity {
                             public void onClick(View view) {
                                 stopMediaPlayer(alarm);
                                 stopVibration(alarm);
-                                //here we turn off alarm but we launch alarmWorker to five minutes +
+                                //here we launch alarmWorker to five minutes +
                                 AlarmManagerLauncher.startTask(getApplicationContext(), alarm.id);
-
-                                alarm.isEnabled = false;
-                                AlarmDatabaseManager.updateAlarm(getApplicationContext(), alarm);
-
                                 finish();
                             }
                         });
@@ -201,6 +165,14 @@ public class AlarmRingActivity extends AppCompatActivity {
             timeMonitorTask.finishThread();
         }
         super.onDestroy();
+    }
+
+    private void initViewFields() {
+        textAlarmRingTime = findViewById(R.id.textAlarmRingTime);
+        textAlarmRingDescription = findViewById(R.id.textAlarmRingDescription);
+        buttonAlarmSolvePuzzle = findViewById(R.id.buttonAlarmSolvePuzzle);
+        buttonAlarmDelay = findViewById(R.id.buttonAlarmDelay);
+        buttonAlarmDismiss = findViewById(R.id.buttonAlarmDismiss);
     }
 
     private void initTimeMonitorTask(TextView textAlarmRingTime) {
@@ -258,6 +230,19 @@ public class AlarmRingActivity extends AppCompatActivity {
         }
     }
 
+    private void setButtonsVisibilityByIsPuzzle(boolean isPuzzle) {
+        if(isPuzzle) {
+            buttonAlarmSolvePuzzle.setVisibility(View.VISIBLE);
+            buttonAlarmDismiss.setVisibility(View.GONE);
+            buttonAlarmDelay.setVisibility(View.GONE);
+        }
+        else {
+            buttonAlarmSolvePuzzle.setVisibility(View.GONE);
+            buttonAlarmDismiss.setVisibility(View.VISIBLE);
+            buttonAlarmDelay.setVisibility(View.VISIBLE);
+        }
+    }
+
     class TimeMonitorTask extends AsyncTask<Void, Calendar, Void> {
         private boolean running = true;
         private TextView textAlarmRingTime;
@@ -294,4 +279,6 @@ public class AlarmRingActivity extends AppCompatActivity {
             running = false;
         }
     }
+
+
 }

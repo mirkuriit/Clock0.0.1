@@ -1,8 +1,10 @@
 package com.terabyte.clock001;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
@@ -12,7 +14,11 @@ import android.widget.TextView;
 import com.google.android.material.snackbar.Snackbar;
 
 public class SolvePuzzleActivity extends AppCompatActivity {
+    private static final String INTENT_KEY_ANSWER = "intentKeyAnswer";
+    private static final String INTENT_KEY_PUZZLE = "intentKeyPuzzle";
 
+    private int answer;
+    private String puzzle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,10 +34,25 @@ public class SolvePuzzleActivity extends AppCompatActivity {
         long alarmId = getIntent().getExtras().getLong(Const.INTENT_KEY_ALARM_ID);
         int hardcoreLevel = getIntent().getExtras().getInt(Const.INTENT_KEY_HARDCORE_LEVEL);
 
+        if(hardcoreLevel== 0 | hardcoreLevel==1) {
+            editSolvePuzzleAnswer.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_CLASS_NUMBER);
+        }
+        else {
+            editSolvePuzzleAnswer.setInputType(InputType.TYPE_CLASS_TEXT);
+        }
 
-        Pair<String, Integer> pair = AlarmPuzzleGenerator.createRandomPuzzle(hardcoreLevel);
+        if(savedInstanceState==null) {
+            Pair<String, Integer> pair = AlarmPuzzleGenerator.createRandomPuzzle(hardcoreLevel);
+            puzzle = pair.first;
+            answer = pair.second;
+        }
+        else {
+            puzzle = savedInstanceState.getString(INTENT_KEY_PUZZLE);
+            answer = savedInstanceState.getInt(INTENT_KEY_ANSWER);
+        }
 
-        textSolvePuzzlePuzzle.setText(pair.first);
+
+        textSolvePuzzlePuzzle.setText(puzzle);
 
         switch(hardcoreLevel) {
             case 0:
@@ -49,49 +70,12 @@ public class SolvePuzzleActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 try {
-                    int answer = Integer.parseInt(editSolvePuzzleAnswer.getText().toString());
-                    if(answer == pair.second) {
-                        //here we turn off alarm and look if there's any repeating
+                    int userAnswer = Integer.parseInt(editSolvePuzzleAnswer.getText().toString());
+                    if(userAnswer == answer) {
+                        //here we turn off mediaPlayer and vibration
                         stopMediaPlayer(alarmId);
                         stopVibration(alarmId);
-
-                        if(AlarmDatabaseManager.getAlarmList()!=null) {
-                            Alarm alarm = AlarmDatabaseManager.getAlarmFromListById(alarmId);
-                            if(alarm.isRepeat) {
-                                AlarmRepeating alarmRepeating = AlarmDatabaseManager.getAlarmRepeatingFromListByParentAlarmId(alarmId);
-                                AlarmManagerLauncher.startTask(getApplicationContext(), alarm.id, alarm.hour, alarm.minute, alarmRepeating.getArrayOfBooleanDays());
-
-                            }
-                            else {
-                                alarm.isEnabled = false;
-                                AlarmDatabaseManager.updateAlarm(getApplicationContext(), alarm);
-                            }
-
-                            finish();
-                        }
-                        else {
-                            AlarmDatabaseManager.getAlarmById(getApplicationContext(), alarmId, new PostExecuteCode() {
-                                @Override
-                                public void doInPostExecuteWhenWeGotAlarm(Alarm alarm) {
-                                    if(alarm.isRepeat) {
-                                        // TODO: 26.04.2022 here we select alarmRepeating and turn on alarmWorker again
-                                        AlarmDatabaseManager.getAlarmRepeatingByParentAlarmId(getApplicationContext(), alarm.id, new PostExecuteCode() {
-                                            @Override
-                                            public void doInPostExecuteWhenWeGotAlarmRepeating(AlarmRepeating alarmRepeating) {
-                                                AlarmManagerLauncher.startTask(getApplicationContext(), alarm.id, alarm.hour, alarm.minute, alarmRepeating.getArrayOfBooleanDays()); // FIXME: 08.05.2022 here we need AlarmList and AlarmRepeatingList but we do'nt have it
-                                            }
-                                        });
-
-                                    }
-                                    else {
-                                        alarm.isEnabled = false;
-                                        AlarmDatabaseManager.updateAlarm(getApplicationContext(), alarm);
-                                    }
-
-                                    finish();
-                                }
-                            });
-                        }
+                        finish();
                     }
                     else {
                         showSnackIncorrectAnswer(view);
@@ -103,6 +87,13 @@ public class SolvePuzzleActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString(INTENT_KEY_PUZZLE, puzzle);
+        outState.putInt(INTENT_KEY_ANSWER, answer);
+        super.onSaveInstanceState(outState);
     }
 
     private void showSnackIncorrectAnswer(View view) {

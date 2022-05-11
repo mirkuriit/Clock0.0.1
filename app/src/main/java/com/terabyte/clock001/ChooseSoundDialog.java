@@ -3,26 +3,32 @@ package com.terabyte.clock001;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import java.io.IOException;
 
 public class ChooseSoundDialog extends DialogFragment {
-    private long alarmId;
+    private Alarm alarm;
     private MediaPlayer mediaPlayer;
     private int chosenId;
 
-    public ChooseSoundDialog(long alarmId) {
-        this.alarmId = alarmId;
+    public ChooseSoundDialog(Alarm alarm) {
+        this.alarm = alarm;
     }
 
     @NonNull
@@ -44,7 +50,6 @@ public class ChooseSoundDialog extends DialogFragment {
 
         RadioGroup radioGroupAlarmSounds = v.findViewById(R.id.radioGroupAlarmSounds);
 
-        Alarm alarm = AlarmDatabaseManager.getAlarmFromListById(alarmId);
         String defaultUriBeginning = "android.resource://com.terabyte.clock001/";
         if(alarm.soundURIString.equals(defaultUriBeginning+R.raw.egor_track)) {
             radioGroupAlarmSounds.check(R.id.radioAlarmSoundEgorTrack);
@@ -75,6 +80,10 @@ public class ChooseSoundDialog extends DialogFragment {
             public void onCheckedChanged(RadioGroup radioGroup, int id) {
                 //we set alarm.soundURIString field in depending of id of selected radioButton
                 alarm.soundURIString = defaultUriBeginning;
+                if(alarm.isEnabled) {
+                    AlarmDatabaseManager.updateAlarm(getContext(), alarm);
+                }
+
                 for(int i = 0; i<radioIds.length;i++) {
                     if(radioIds[i] == id) {
                         alarm.soundURIString+=rawIds[i];
@@ -110,7 +119,23 @@ public class ChooseSoundDialog extends DialogFragment {
             }
         });
 
-
+        Button buttonChooseCustomSound = v.findViewById(R.id.buttonChooseCustomSound);
+        buttonChooseCustomSound.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                ActivityResultLauncher<String> launcher = registerForActivityResult(new ActivityResultContracts.GetContent(), new ActivityResultCallback<Uri>() {
+//                    @Override
+//                    public void onActivityResult(Uri result) {
+//                        alarm.soundURIString = result.toString();
+//                    }
+//                });
+//                launcher.launch("audio/*");
+                Intent intent= new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("audio/*");
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                startActivityForResult(intent, 0);
+            }
+        });
         // Устанавливает кнопку подтверждения и обработчик события клик для кнопки
         alertDialogBuilder.setPositiveButton(getString(R.string.apply), new DialogInterface.OnClickListener() {
             @Override
@@ -124,6 +149,11 @@ public class ChooseSoundDialog extends DialogFragment {
         });
         // Вернуть экземпляр диалогового окна для показа
         return alertDialogBuilder.create();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void playSound(String uriString) {

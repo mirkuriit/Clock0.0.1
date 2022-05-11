@@ -77,6 +77,10 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
         holder.itemView.setActivated(isExpanded);
         if (isExpanded) {
             previousExpandedPosition = holder.getAdapterPosition();
+            holder.buttonAlarmListExtendParams.setImageResource(R.drawable.ic_dropup_arrow);
+        }
+        else {
+            holder.buttonAlarmListExtendParams.setImageResource(R.drawable.ic_dropdown_arrow);
         }
 
         holder.switchAlarmList.setChecked(alarm.isEnabled);
@@ -86,6 +90,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
                 alarm.isEnabled = b;
 
                 if (b) {
+                    AlarmDatabaseManager.updateAlarm(context, alarm);
                     if(alarm.isRepeat) {
                         AlarmRepeating alarmRepeating = AlarmDatabaseManager.getAlarmRepeatingFromListByParentAlarmId(alarm.id);
                         AlarmManagerLauncher.startTask(context, alarm.id, alarm.hour, alarm.minute, alarmRepeating.getArrayOfBooleanDays());
@@ -104,14 +109,6 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
 
         holder.textAlarmListDescription.setText(alarm.description);
 
-        //here we are setting value for textAlarmListDates
-        if (alarm.isRepeat) {
-            boolean[] days = AlarmDatabaseManager.getAlarmRepeatingFromListByParentAlarmId(alarm.id).getArrayOfBooleanDays();
-            holder.textAlarmListDates.setText(AlarmRepeatUITextBuilder.getStringByDaysArray(context, days));
-        } else {
-            holder.textAlarmListDates.setText(AlarmRepeatUITextBuilder.getStringByTime(context, alarm.hour, alarm.minute));
-        }
-
         holder.buttonAlarmListExtendParams.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View buttonAlarmListExtendParams) {
@@ -126,7 +123,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
             holder.buttonAlarmListChoosePuzzleType.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ChoosePuzzleDialog dialog = new ChoosePuzzleDialog(alarm.id);
+                    ChoosePuzzleDialog dialog = new ChoosePuzzleDialog(alarm);
                     dialog.show(fragment.getActivity().getSupportFragmentManager(), "choosePuzzleDialog");
                 }
             });
@@ -172,25 +169,14 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
                         if (Arrays.equals(alarmRepeating.getArrayOfBooleanDays(), falseArrayForCheckingCondition)) {
                             //here all chips are false and we can hide chipGroup, turn off checkBoxRepeat and delete alarmRepeating from database
                             //but to do this we just can set checked false in checkBoxAlarmListRepeat. In checkBox will be run onCheckedChangeListener if we do it
-                            holder.scrollViewChips.setVisibility(View.GONE);
-
                             holder.checkBoxAlarmListRepeat.setChecked(false);
-
-                            AlarmDatabaseManager.getAlarmRepeatingList().remove(alarmRepeating);
-
-                            holder.textAlarmListDates.setText(AlarmRepeatUITextBuilder.getStringByTime(context, alarm.hour, alarm.minute));
-
-                            if (alarm.isEnabled) {
-                                AlarmManagerLauncher.stopTask(context, alarm.id);
-                                AlarmManagerLauncher.startTask(context, alarm.id, alarm.hour, alarm.minute);
-
-                            }
                         } else {
                             holder.textAlarmListDates.setText(AlarmRepeatUITextBuilder.getStringByDaysArray(context, alarmRepeating.getArrayOfBooleanDays()));
 
                             if (alarm.isEnabled) {
                                 AlarmManagerLauncher.stopTask(context, alarm.id);
                                 AlarmManagerLauncher.startTask(context, alarm.id, alarm.hour, alarm.minute, alarmRepeating.getArrayOfBooleanDays());
+                                AlarmDatabaseManager.updateAlarmRepeating(context, alarmRepeating);
                             }
                         }
 
@@ -198,8 +184,10 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
                     }
                 });
             }
+            holder.textAlarmListDates.setText(AlarmRepeatUITextBuilder.getStringByDaysArray(context, days));
         } else {
             holder.scrollViewChips.setVisibility(View.GONE);
+            holder.textAlarmListDates.setText(AlarmRepeatUITextBuilder.getStringByTime(context, alarm.hour, alarm.minute));
         }
 
         holder.checkBoxAlarmListRepeat.setChecked(alarm.isRepeat);
@@ -218,7 +206,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
                         @Override
                         public void doInPostExecuteWhenWeGotIdOfCreatedAlarmRepeating(long createdAlarmRepeatingId) {
                             repeating.id = createdAlarmRepeatingId;
-                            AlarmDatabaseManager.updateAlarmRepeatingList(repeating);
+                            AlarmDatabaseManager.getAlarmRepeatingList().add(repeating);
 
                             for (int i = 0; i < 7; i++) {
                                 Chip chip = (Chip) holder.linearLayoutChips.getChildAt(i);
@@ -255,25 +243,14 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
                                         if (Arrays.equals(repeating.getArrayOfBooleanDays(), falseArrayForCheckingCondition)) {
                                             //here all chips are false and we can hide chipGroup, turn off checkBoxRepeat and delete alarmRepeating from database
                                             //but to do this we just can set checked false in checkBoxAlarmListRepeat. In checkBox will be run onCheckedChangeListener if we do it
-                                            holder.scrollViewChips.setVisibility(View.GONE);
-
                                             holder.checkBoxAlarmListRepeat.setChecked(false);
-
-                                            AlarmDatabaseManager.getAlarmRepeatingList().remove(repeating);
-
-                                            holder.textAlarmListDates.setText(AlarmRepeatUITextBuilder.getStringByTime(context, alarm.hour, alarm.minute));
-
-                                            if (alarm.isEnabled) {
-                                                AlarmManagerLauncher.stopTask(context, alarm.id);
-                                                AlarmManagerLauncher.startTask(context, alarm.id, alarm.hour, alarm.minute);
-
-                                            }
-                                        } else {
+                                        }
+                                        else {
                                             holder.textAlarmListDates.setText(AlarmRepeatUITextBuilder.getStringByDaysArray(context, repeating.getArrayOfBooleanDays()));
-
                                             if (alarm.isEnabled) {
                                                 AlarmManagerLauncher.stopTask(context, alarm.id);
                                                 AlarmManagerLauncher.startTask(context, alarm.id, alarm.hour, alarm.minute, repeating.getArrayOfBooleanDays());
+                                                AlarmDatabaseManager.updateAlarmRepeating(context, repeating);
                                             }
                                         }
                                     }
@@ -281,8 +258,6 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
                             }
                         }
                     });
-
-
                     holder.textAlarmListDates.setText(AlarmRepeatUITextBuilder.getStringByDaysArray(context, days));
                 } else {
                     holder.scrollViewChips.setVisibility(View.GONE);
@@ -290,6 +265,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
                     //but first we should get alarmRepeatingObject
                     AlarmRepeating alarmRepeating = AlarmDatabaseManager.getAlarmRepeatingFromListByParentAlarmId(alarm.id);
                     AlarmDatabaseManager.getAlarmRepeatingList().remove(alarmRepeating);
+                    AlarmDatabaseManager.deleteAlarmRepeating(context, alarmRepeating);
 
                     holder.textAlarmListDates.setText(AlarmRepeatUITextBuilder.getStringByTime(context, alarm.hour, alarm.minute));
 
@@ -300,7 +276,9 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
                 }
 
                 alarm.isRepeat = b;
-
+                if(alarm.isEnabled) {
+                    AlarmDatabaseManager.updateAlarm(context, alarm);
+                }
             }
         });
 
@@ -309,6 +287,9 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 alarm.isVibration = b;
+                if(alarm.isEnabled) {
+                    AlarmDatabaseManager.updateAlarm(context, alarm);
+                }
             }
         });
 
@@ -328,6 +309,10 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
             public void afterTextChanged(Editable editable) {
                 holder.textAlarmListDescription.setText(editable.toString());
                 alarm.description = editable.toString();
+
+                if(alarm.isEnabled) {
+                    AlarmDatabaseManager.updateAlarm(context, alarm);
+                }
             }
         });
 
@@ -336,6 +321,9 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 alarm.isPuzzle = b;
+                if(alarm.isEnabled) {
+                    AlarmDatabaseManager.updateAlarm(context, alarm);
+                }
 
                 if (b) {
                     holder.buttonAlarmListChoosePuzzleType.setVisibility(View.VISIBLE);
@@ -345,11 +333,11 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
                         @Override
                         public void doInPostExecuteWhenWeGotIdOfCreatedAlarmPuzzle(long createdAlarmPuzzleId) {
                             alarmPuzzle.id = createdAlarmPuzzleId;
-                            AlarmDatabaseManager.updateAlarmPuzzleList(alarmPuzzle);
+                            AlarmDatabaseManager.getAlarmPuzzleList().add(alarmPuzzle);
                             holder.buttonAlarmListChoosePuzzleType.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    ChoosePuzzleDialog dialog = new ChoosePuzzleDialog(alarm.id);
+                                    ChoosePuzzleDialog dialog = new ChoosePuzzleDialog(alarm);
                                     dialog.show(fragment.getActivity().getSupportFragmentManager(), "choosePuzzleDialog");
                                 }
                             });
@@ -359,6 +347,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
                     holder.buttonAlarmListChoosePuzzleType.setVisibility(View.GONE);
                     AlarmPuzzle alarmPuzzle = AlarmDatabaseManager.getAlarmPuzzleFromListByParentAlarmId(alarm.id);
                     AlarmDatabaseManager.getAlarmPuzzleList().remove(alarmPuzzle);
+                    AlarmDatabaseManager.deleteAlarmPuzzle(context, alarmPuzzle);
                 }
             }
         });
@@ -366,7 +355,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
         holder.buttonAlarmListSound.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ChooseSoundDialog dialog = new ChooseSoundDialog(alarm.id);
+                ChooseSoundDialog dialog = new ChooseSoundDialog(alarm);
                 dialog.show(fragment.getActivity().getSupportFragmentManager(), "chooseSoundDialog");
             }
         });
@@ -375,15 +364,20 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmHolder>
             @Override
             public void onClick(View buttonAlarmListDelete) {
                 if (alarm.isRepeat) {
-                    AlarmDatabaseManager.getAlarmRepeatingList().remove(AlarmDatabaseManager.getAlarmRepeatingFromListByParentAlarmId(alarm.id));
+                    AlarmRepeating alarmRepeatingToDelete = AlarmDatabaseManager.getAlarmRepeatingFromListByParentAlarmId(alarm.id);
+                    AlarmDatabaseManager.getAlarmRepeatingList().remove(alarmRepeatingToDelete);
+                    AlarmDatabaseManager.deleteAlarmRepeating(context, alarmRepeatingToDelete);
                 }
                 if (alarm.isPuzzle) {
-                    AlarmDatabaseManager.getAlarmPuzzleList().remove(AlarmDatabaseManager.getAlarmPuzzleFromListByParentAlarmId(alarm.id));
+                    AlarmPuzzle alarmPuzzleToDelete = AlarmDatabaseManager.getAlarmPuzzleFromListByParentAlarmId(alarm.id);
+                    AlarmDatabaseManager.getAlarmPuzzleList().remove(alarmPuzzleToDelete);
+                    AlarmDatabaseManager.deleteAlarmPuzzle(context, alarmPuzzleToDelete);
                 }
 
                 AlarmManagerLauncher.stopTask(context, alarm.id);
 
                 AlarmDatabaseManager.getAlarmList().remove(alarm);
+                AlarmDatabaseManager.deleteAlarm(context, alarm);
 
                 if(AlarmDatabaseManager.getAlarmList().size()==0) {
                     //here we have already deleted all alarms and we need to restart fragment to

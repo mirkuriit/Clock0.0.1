@@ -49,13 +49,12 @@
 
     <EditText
         android:id="@+id/editSolvePuzzleAnswer"
-        android:text="200"
+        android:text=""
         style="@style/styleDescription2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:hint="0"
-        android:inputType="number"
         android:minHeight="48dp"
         app:layout_constraintBottom_toTopOf="@id/buttonSolvePuzzleSendAnswer"
         app:layout_constraintEnd_toEndOf="parent"

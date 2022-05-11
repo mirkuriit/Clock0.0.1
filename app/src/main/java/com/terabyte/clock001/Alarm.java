@@ -38,4 +38,6 @@ public class Alarm {
     public static String getDefaultSoundUriString() {
         return "android.resource://com.terabyte.clock001/"+R.raw.egor_track;
     }
+
+
 }

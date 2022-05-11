@@ -14,9 +14,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 public class ChoosePuzzleDialog extends DialogFragment {
-    private long alarmId;
-    public ChoosePuzzleDialog(long alarmId) {
-        this.alarmId = alarmId;
+    private Alarm alarm;
+    public ChoosePuzzleDialog(Alarm alarm) {
+        this.alarm = alarm;
     }
 
     @NonNull
@@ -36,7 +36,7 @@ public class ChoosePuzzleDialog extends DialogFragment {
 
         setUIBehaviourOfTextDescriptions(view);
 
-        AlarmPuzzle alarmPuzzle = AlarmDatabaseManager.getAlarmPuzzleFromListByParentAlarmId(alarmId);
+        AlarmPuzzle alarmPuzzle = AlarmDatabaseManager.getAlarmPuzzleFromListByParentAlarmId(alarm.id);
 
         RadioGroup radioGroupAlarmPuzzles = view.findViewById(R.id.radioGroupAlarmPuzzles);
 
@@ -61,6 +61,9 @@ public class ChoosePuzzleDialog extends DialogFragment {
                 }
 
                 alarmPuzzle.hardcoreLevel = hardcoreLevel;
+                if(alarm.isEnabled) {
+                    AlarmDatabaseManager.updateAlarmPuzzle(getContext(), alarmPuzzle);
+                }
             }
         });
 
