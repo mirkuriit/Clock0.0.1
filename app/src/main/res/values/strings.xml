@@ -37,9 +37,15 @@
     <string name="difficulty_instruction1">evaluate math expression</string>
     <string name="difficulty_instruction2">find the minimal answer of equation</string>
     <string name="incorrect_answer">Incorrect answer!</string>
+
     <string name="alarm_notification_channel_description">Notifications about all enabled alarms</string>
     <string name="alarm_notification_channel_name">Alarm notifications</string>
     <string name="alarm_notification_content_title">There are some enabled alarms</string>
+
+    <string name="timer_notification_channel_description">These notifications will show when timer runs</string>
+    <string name="timer_notification_channel_name">Timer notifications</string>
+    <string name="timer_notification_content_title">Timer is running now!</string>
+
     <string name="choose_alarm_sound">Choose alarm sound</string>
     <string name="choose_custom_sound">Choose custom sound</string>
 

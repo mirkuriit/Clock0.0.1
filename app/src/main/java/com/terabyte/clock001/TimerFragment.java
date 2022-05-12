@@ -1,6 +1,7 @@
 package com.terabyte.clock001;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Timer;
 
 
 public class TimerFragment extends Fragment {
@@ -71,6 +73,9 @@ public class TimerFragment extends Fragment {
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                         fragmentTransaction.replace(R.id.frameLayoutForFragments, timerRunFragment).commit();
 
+                        Intent intent = new Intent(getContext(), TimerService.class);
+                        intent.putExtra(Const.INTENT_KEY_TIMER_LEFT_TIME_MILLS, mTimeLeftInMillis);
+                        getContext().startService(intent);
                     }
                 });
                 break;
@@ -92,6 +97,8 @@ public class TimerFragment extends Fragment {
                 mButtonReset.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        getContext().stopService(new Intent(getContext(), TimerService.class));
+
                         //todo персоздаем фрагмент с MODE_SLEEP
                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                         TimerFragment timerRunFragment = new TimerFragment(Const.MODE_SLEEP);
@@ -131,6 +138,10 @@ public class TimerFragment extends Fragment {
     }
 
     private void startTimer(){
+        Intent intent = new Intent(getContext(), TimerService.class);
+        intent.putExtra(Const.INTENT_KEY_TIMER_LEFT_TIME_MILLS, mTimeLeftInMillis);
+        getContext().startService(intent);
+
         mButtonStartPause.setText("Pause");
         mEndTime = System.currentTimeMillis() + mTimeLeftInMillis;
 
@@ -151,6 +162,8 @@ public class TimerFragment extends Fragment {
     }
 
     private void pauseTimer(){
+        getContext().stopService(new Intent(getContext(), TimerService.class));
+
         mButtonStartPause.setText("Start");
         mCountDownTimer.cancel();
         mTimerRunning = false;

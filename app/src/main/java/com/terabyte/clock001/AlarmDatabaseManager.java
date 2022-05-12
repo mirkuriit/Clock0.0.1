@@ -230,7 +230,7 @@ public class AlarmDatabaseManager {
         }
 
         DatabaseTask task = new DatabaseTask();
-        task.execute(AlarmDatabaseClient.getInstance(context).getAppDatabase());
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, AlarmDatabaseClient.getInstance(context).getAppDatabase());
 
     }
 
@@ -322,7 +322,9 @@ public class AlarmDatabaseManager {
             protected Void doInBackground(AlarmDatabase... alarmDatabases) {
                 AlarmDatabase db = alarmDatabases[0];
                 for(Alarm alarm : alarmList) {
-                    db.alarmDao().update(alarm);
+                    if(!alarm.isEnabled) {
+                        db.alarmDao().update(alarm);
+                    }
                 }
                 for(AlarmRepeating alarmRepeating : alarmRepeatingList) {
                     db.alarmRepeatingDao().update(alarmRepeating);

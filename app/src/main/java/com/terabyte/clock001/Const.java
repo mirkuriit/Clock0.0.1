@@ -20,10 +20,13 @@ public class Const {
     public static final String INTENT_KEY_ALARM_ID = "intentKeyAlarmId";
     public static final String INTENT_KEY_HARDCORE_LEVEL = "intentKeyHardcoreLevel";
     public static final String INTENT_KEY_IS_DELAYED_ALARM = "intentKeyIsDelayedAlarm";
+    public static final String INTENT_KEY_TIMER_LEFT_TIME_MILLS = "intentKeyTimerLeftTimeMills";
 
 
     public static final String ALARM_NOTIFICATION_CHANNEL_ID = "alarmNotificationChannelId";
     public static final int ALARM_NOTIFICATION_ID = 1;
 
+    public static final String TIMER_NOTIFICATION_CHANNEL_ID ="timerNotificationChannelId";
+    public static final int TIMER_NOTIFICATION_ID = 2;
 
 }
