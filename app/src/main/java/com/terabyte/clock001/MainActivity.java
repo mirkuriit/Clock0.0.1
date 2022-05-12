@@ -20,6 +20,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        getSupportActionBar().hide();
+
         if(AlarmDatabaseManager.getAlarmList()==null) {
             AlarmDatabaseManager.importDb(getApplicationContext(), new PostExecuteCode() {
                 @Override
@@ -64,7 +66,14 @@ public class MainActivity extends AppCompatActivity {
                         transaction.replace(R.id.frameLayoutForFragments, new StopwatchFragment());
                         break;
                     case R.id.menuItemTimer:
-                        transaction.replace(R.id.frameLayoutForFragments, new TimerFragment(Const.MODE_SLEEP));
+                        TimerFragment timerFragment;
+                        if(TimerService.getRunning()) {
+                            timerFragment = new TimerFragment(Const.MODE_RUN);
+                        }
+                        else {
+                            timerFragment = new TimerFragment(Const.MODE_SLEEP);
+                        }
+                        transaction.replace(R.id.frameLayoutForFragments, timerFragment);
                         break;
                 }
                 transaction.commit();

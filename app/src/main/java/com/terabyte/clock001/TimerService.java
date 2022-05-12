@@ -10,11 +10,19 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.IBinder;
+import android.widget.TextView;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 public class TimerService extends Service {
+    private static boolean isRunning;
+    private static long timeLeft;
+    private static boolean isFragmentExists;
+    private static TextView textTimer;
+
+    CountDownTimer mCountDownTimer;
+
     public TimerService() {
     }
 
@@ -26,11 +34,16 @@ public class TimerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        long startTimeLeftInMills = intent.getExtras().getLong(Const.INTENT_KEY_TIMER_LEFT_TIME_MILLS);
+        timeLeft = intent.getExtras().getLong(Const.INTENT_KEY_TIMER_LEFT_TIME_MILLS);
 
-        CountDownTimer mCountDownTimer = new CountDownTimer(startTimeLeftInMills, 1000) {
+        mCountDownTimer = new CountDownTimer(timeLeft, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
+                if(isFragmentExists) {
+                    timeLeft = millisUntilFinished;
+                    int[] hoursMinutesSecondsArray = TimerFragment.getHoursMinutesSecondsAsArrayFromMills(timeLeft);
+                    textTimer.setText(String.format("%02d:%02d:%02d", hoursMinutesSecondsArray[0], hoursMinutesSecondsArray[1], hoursMinutesSecondsArray[2]));
+                }
                 NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
                 notificationManagerCompat.notify(Const.TIMER_NOTIFICATION_ID, createNotification(millisUntilFinished));
             }
@@ -44,12 +57,16 @@ public class TimerService extends Service {
             }
         }.start();
 
-        startForeground(Const.TIMER_NOTIFICATION_ID, createNotification(startTimeLeftInMills));
+        startForeground(Const.TIMER_NOTIFICATION_ID, createNotification(timeLeft));
+
+        isRunning = true;
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
+;        isRunning = false;
+        mCountDownTimer.cancel();
         super.onDestroy();
     }
 
@@ -84,5 +101,21 @@ public class TimerService extends Service {
             NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
+    }
+
+    public static boolean getRunning() {
+        return isRunning;
+    }
+
+    public static long getTimeLeft() {
+        return timeLeft;
+    }
+
+    public static void setFragmentExists(boolean isFragmentExists) {
+        TimerService.isFragmentExists = isFragmentExists;
+    }
+
+    public static void setTextTimer(TextView textTimer) {
+        TimerService.textTimer = textTimer;
     }
 }

@@ -23,22 +23,12 @@ import java.util.Timer;
 
 
 public class TimerFragment extends Fragment {
-    private static final long START_TIME_IN_MILLIS = 1200000;
-
     private int MODE;
-
 
     private TextView mTextVievCountdown;
     private Button mButtonStartPause;
     private Button mButtonStartWorkingTimer;
     private Button mButtonReset;
-
-    private CountDownTimer mCountDownTimer;
-
-    private boolean mTimerRunning;
-
-    private static long mTimeLeftInMillis;
-    private long mEndTime;
 
     NumberPicker numberPickerHours;
     NumberPicker numberPickerMinutes;
@@ -48,51 +38,65 @@ public class TimerFragment extends Fragment {
         this.MODE = MODE;
     }
 
-    public TimerFragment(int MODE, long mTimeLeftInMillis){
-        this.MODE = MODE;
-        this.mTimeLeftInMillis = mTimeLeftInMillis;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        TimerService.setFragmentExists(true);
+
         View view;
         view = inflater.inflate(R.layout.fragment_timer_sleep, container, false);
-        switch (MODE){
+
+        switch(MODE) {
             case Const.MODE_SLEEP:
                 view = inflater.inflate(R.layout.fragment_timer_sleep, container, false);
                 initializationModeSleep(view);
-
                 mButtonStartWorkingTimer.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
-                        mTimeLeftInMillis = getTimeLeftMillisFromNumberPicker(numberPickerHours.getValue(),
-                                numberPickerMinutes.getValue(), numberPickerSeconds.getValue());
+                    public void onClick(View view) {
+                        long startTime = getTimeLeftMillisFromNumberPicker(numberPickerHours.getValue(), numberPickerMinutes.getValue(), numberPickerSeconds.getValue());
                         //todo переход на этот же фрагмент с передачей mTimeLeftInMillis и MODE_RUN
                         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                        TimerFragment timerRunFragment = new TimerFragment(Const.MODE_RUN, mTimeLeftInMillis);
+                        TimerFragment timerRunFragment = new TimerFragment(Const.MODE_RUN);
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                         fragmentTransaction.replace(R.id.frameLayoutForFragments, timerRunFragment).commit();
 
                         Intent intent = new Intent(getContext(), TimerService.class);
-                        intent.putExtra(Const.INTENT_KEY_TIMER_LEFT_TIME_MILLS, mTimeLeftInMillis);
+                        intent.putExtra(Const.INTENT_KEY_TIMER_LEFT_TIME_MILLS, startTime);
                         getContext().startService(intent);
                     }
                 });
+                TimerService.setTextTimer(null);
                 break;
             case Const.MODE_RUN:
                 view = inflater.inflate(R.layout.fragment_timer_run, container, false);
                 initializationModeRun(view);
+                TimerService.setTextTimer(mTextVievCountdown);
+
+                if(TimerService.getRunning()) {
+                    mButtonStartPause.setText("pause");
+                }
+                else {
+                    mButtonStartPause.setText("resume");
+                }
+
+                int[] hoursMinutesSecondsArray = getHoursMinutesSecondsAsArrayFromMills(TimerService.getTimeLeft());
+                mTextVievCountdown.setText(String.format("%02d:%02d:%02d", hoursMinutesSecondsArray[0], hoursMinutesSecondsArray[1], hoursMinutesSecondsArray[2]));
+
                 mButtonStartPause.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (mTimerRunning){
-                            pauseTimer();
-                        }else{
-                            startTimer();
+                        if (TimerService.getRunning()){
+                            getContext().stopService(new Intent(getContext(), TimerService.class));
+                            mButtonStartPause.setText("resume");
+
+                        }
+                        else{
+                            Intent intent = new Intent(getContext(), TimerService.class);
+                            intent.putExtra(Const.INTENT_KEY_TIMER_LEFT_TIME_MILLS, TimerService.getTimeLeft());
+                            getContext().startService(intent);
+                            mButtonStartPause.setText("pause");
                         }
                     }
                 });
-
 
                 mButtonReset.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -106,10 +110,16 @@ public class TimerFragment extends Fragment {
                         fragmentTransaction.replace(R.id.frameLayoutForFragments, timerRunFragment).commit();
                     }
                 });
-                startTimer();
                 break;
         }
         return view;
+    }
+
+    @Override
+    public void onStop() {
+        TimerService.setFragmentExists(false);
+        TimerService.setTextTimer(null);
+        super.onStop();
     }
 
     private void initializationModeSleep(View view){
@@ -137,46 +147,19 @@ public class TimerFragment extends Fragment {
         mButtonReset = view.findViewById(R.id.button_reset);
     }
 
-    private void startTimer(){
-        Intent intent = new Intent(getContext(), TimerService.class);
-        intent.putExtra(Const.INTENT_KEY_TIMER_LEFT_TIME_MILLS, mTimeLeftInMillis);
-        getContext().startService(intent);
+    public static int[] getHoursMinutesSecondsAsArrayFromMills(long mills) {
+        int[] result = new int[3];
 
-        mButtonStartPause.setText("Pause");
-        mEndTime = System.currentTimeMillis() + mTimeLeftInMillis;
-
-        mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                //Осталось до конца
-                mTimeLeftInMillis = millisUntilFinished;
-                updateCountDownText();
-            }
-
-            @Override
-            public void onFinish() {
-                mTimerRunning = false;
-            }
-        }.start();
-        mTimerRunning = true;
+        int inputSeconds = (int) mills/1000;
+        result[0] = inputSeconds/3600;
+        result[1] = (inputSeconds - result[0]*3600)/60;
+        result[2] = (inputSeconds - result[0]*3600)%60;
+        return result;
     }
 
-    private void pauseTimer(){
-        getContext().stopService(new Intent(getContext(), TimerService.class));
 
-        mButtonStartPause.setText("Start");
-        mCountDownTimer.cancel();
-        mTimerRunning = false;
-    }
 
-    private void updateCountDownText(){
-        int hours = (int) mTimeLeftInMillis / 1000 / 3600;
-        int minutes = (int) mTimeLeftInMillis / 1000 / 60 % 60;
-        int seconds = (int) mTimeLeftInMillis / 1000 % 60;
-        String timeLeftFormatted = String.format(Locale.getDefault(),"%02d:%02d:%02d", hours, minutes, seconds);
 
-        mTextVievCountdown.setText(timeLeftFormatted);
-    }
 
 
 }
