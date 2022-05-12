@@ -7,6 +7,10 @@ import java.util.List;
  */
 
 public class Const {
+    public static final int MODE_SLEEP = 0;
+    public static final int MODE_RUN = 1;
+    public static final int MODE_PAUSED = 2;
+
     public static final String TAG = "myDebug";
 
     //in Room database we have to add name of db. But It doesn't care how to name it

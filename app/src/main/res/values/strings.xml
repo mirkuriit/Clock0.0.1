@@ -53,4 +53,10 @@
     <string name="alarm_sound_custom">custom sound</string>
     <string name="start">start</string>
     <string name="reset">reset</string>
+    <string name="seconds">seconds</string>
+    <string name="minutes">minutes</string>
+    <string name="hours">hours</string>
+    <string name="pause">pause</string>
+    <string name="cancel">cancel</string>
+    <string name="resume">resume</string>
 </resources>
