@@ -7,9 +7,8 @@ import java.util.List;
  */
 
 public class Const {
-    public static final int MODE_SLEEP = 0;
-    public static final int MODE_RUN = 1;
-    public static final int MODE_PAUSED = 2;
+    public static final int MODE_SLEEP = 1;
+    public static final int MODE_RUN = 2;
 
     public static final String TAG = "myDebug";
 

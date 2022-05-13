@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/textRunningTimer"
+        android:id="@+id/textTimerRun"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="00:00:00"
@@ -17,17 +17,17 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button_pause"
+        android:id="@+id/buttonTimerPause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/purple_200"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_margin="20dp"
-        android:text="@string/start" />
+        android:text="@string/pause" />
 
     <Button
-        android:id="@+id/button_reset"
+        android:id="@+id/buttonTimerCancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/black"

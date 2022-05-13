@@ -16,7 +16,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 public class TimerService extends Service {
-    private static boolean isRunning;
+    public static boolean isRunning;
     private static long timeLeft;
     private static boolean isFragmentExists;
     private static TextView textTimer;
@@ -34,32 +34,40 @@ public class TimerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        timeLeft = intent.getExtras().getLong(Const.INTENT_KEY_TIMER_LEFT_TIME_MILLS);
+        if(intent==null) {
+            //here service thinks that it was crush and service try to restart. But we don't need it
+        }
+        else {
+            isRunning = true;
 
-        mCountDownTimer = new CountDownTimer(timeLeft, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                if(isFragmentExists) {
-                    timeLeft = millisUntilFinished;
-                    int[] hoursMinutesSecondsArray = TimerFragment.getHoursMinutesSecondsAsArrayFromMills(timeLeft);
-                    textTimer.setText(String.format("%02d:%02d:%02d", hoursMinutesSecondsArray[0], hoursMinutesSecondsArray[1], hoursMinutesSecondsArray[2]));
+            timeLeft = intent.getExtras().getLong(Const.INTENT_KEY_TIMER_LEFT_TIME_MILLS);
+
+            mCountDownTimer = new CountDownTimer(timeLeft, 1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    if(isFragmentExists & textTimer!=null) {
+                        timeLeft = millisUntilFinished;
+                        int[] hoursMinutesSecondsArray = TimerFragment.getHoursMinutesSecondsAsArrayFromMills(timeLeft);
+                        textTimer.setText(String.format("%02d:%02d:%02d", hoursMinutesSecondsArray[0], hoursMinutesSecondsArray[1], hoursMinutesSecondsArray[2]));
+                    }
+                    NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
+                    notificationManagerCompat.notify(Const.TIMER_NOTIFICATION_ID, createNotification(millisUntilFinished));
                 }
-                NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
-                notificationManagerCompat.notify(Const.TIMER_NOTIFICATION_ID, createNotification(millisUntilFinished));
-            }
 
-            @Override
-            public void onFinish() {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    stopForeground(0);
+                @Override
+                public void onFinish() {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        stopForeground(0);
+                    }
+                    stopSelf();
                 }
-                stopSelf();
-            }
-        }.start();
+            }.start();
 
-        startForeground(Const.TIMER_NOTIFICATION_ID, createNotification(timeLeft));
+            startForeground(Const.TIMER_NOTIFICATION_ID, createNotification(timeLeft));
 
-        isRunning = true;
+
+
+        }
         return START_STICKY;
     }
 
@@ -101,10 +109,6 @@ public class TimerService extends Service {
             NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
-    }
-
-    public static boolean getRunning() {
-        return isRunning;
     }
 
     public static long getTimeLeft() {

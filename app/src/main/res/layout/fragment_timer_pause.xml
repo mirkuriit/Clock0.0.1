@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/textPausedTimer"
+        android:id="@+id/textTimerPause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="00:00:00"
@@ -17,22 +17,23 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
+        android:id="@+id/buttonTimerResume"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:backgroundTint="#009688"
         android:layout_margin="20dp"
-        android:text="@string/resume"
-        android:onClick="onClickButtonResume" />
+        android:text="@string/resume" />
 
     <Button
+        android:id="@+id/buttonTimerCancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/black"
         android:text="@string/cancel"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="20dp"
-        android:onClick="onClickButtonCancel"/>
+        android:layout_margin="20dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

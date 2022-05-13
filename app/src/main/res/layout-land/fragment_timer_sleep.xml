@@ -19,7 +19,6 @@
         android:id="@+id/numberPickerHours"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="200dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/textBorderNumberPicker1"
         app:layout_constraintTop_toTopOf="parent"
@@ -38,7 +37,6 @@
         android:id="@+id/numberPickerMinutes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="200dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -60,7 +58,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textBorderNumberPicker2"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginBottom="200dp"
+
         android:layout_marginLeft="10dp"/>
 
     <TextView
