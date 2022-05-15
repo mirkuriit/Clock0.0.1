@@ -65,4 +65,10 @@
     <string name="pause">pause</string>
     <string name="cancel">cancel</string>
     <string name="resume">resume</string>
+    <string name="settings">Settings</string>
+    <string name="alarm_settings">Alarm settings</string>
+    <string name="alarm_vibration_pattern">alarm vibration pattern</string>
+    <string name="alarm_vibration_pattern_name1">ordinary vibration</string>
+    <string name="alarm_vibration_pattern_name2">mono vibration</string>
+    <string name="alarm_vibration_pattern_name3">cutting vibration</string>
 </resources>

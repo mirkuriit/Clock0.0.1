@@ -1,9 +1,11 @@
 package com.terabyte.clock001;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -13,14 +15,17 @@ import android.os.Vibrator;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.Calendar;
+import java.util.Random;
 
 public class AlarmRingActivity extends AppCompatActivity {
     TimeMonitorTask timeMonitorTask;
     TextView textAlarmRingTime, textAlarmRingDescription;
     Button buttonAlarmSolvePuzzle, buttonAlarmDelay, buttonAlarmDismiss;
+    int backgroundImageId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +33,16 @@ public class AlarmRingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_alarm_ring);
 
         getSupportActionBar().hide();
+
+        if(savedInstanceState==null) {
+            backgroundImageId = setRandomBackgroundImage(findViewById(R.id.imageAlarmRingBackground));
+        }
+        else {
+            backgroundImageId = savedInstanceState.getInt(Const.INTENT_KEY_BACKGROUND_IMAGE_ID);
+            ImageView imageAlarmRingBackground = findViewById(R.id.imageAlarmRingBackground);
+            imageAlarmRingBackground.setImageDrawable(getDrawable(backgroundImageId));
+        }
+
 
         long alarmId = getIntent().getExtras().getLong(Const.INTENT_KEY_ALARM_ID);
 
@@ -63,6 +78,7 @@ public class AlarmRingActivity extends AppCompatActivity {
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                         intent.putExtra(Const.INTENT_KEY_HARDCORE_LEVEL, alarmPuzzle.hardcoreLevel);
                         intent.putExtra(Const.INTENT_KEY_ALARM_ID, alarm.id);
+                        intent.putExtra(Const.INTENT_KEY_BACKGROUND_IMAGE_ID, backgroundImageId);
                         startActivity(intent);
                     }
                 });
@@ -125,6 +141,7 @@ public class AlarmRingActivity extends AppCompatActivity {
                                         Intent intent = new Intent(getApplicationContext(), SolvePuzzleActivity.class);
                                         intent.putExtra(Const.INTENT_KEY_HARDCORE_LEVEL, alarmPuzzle.hardcoreLevel);
                                         intent.putExtra(Const.INTENT_KEY_ALARM_ID, alarm.id);
+                                        intent.putExtra(Const.INTENT_KEY_BACKGROUND_IMAGE_ID, backgroundImageId);
                                         startActivity(intent);
                                     }
                                 });
@@ -155,6 +172,12 @@ public class AlarmRingActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putInt(Const.INTENT_KEY_BACKGROUND_IMAGE_ID, backgroundImageId);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -201,7 +224,16 @@ public class AlarmRingActivity extends AppCompatActivity {
             MediaPlayerManager.vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             MediaPlayerManager.alarmIdForVibrator = alarm.id;
             if(MediaPlayerManager.vibrator.hasVibrator()) {
-                long[] vibratePattern = {0,1500, 1000, 1500};
+                long[] vibratePattern;
+
+                SharedPreferences preferences = getSharedPreferences(Const.SH_PREFERENCES_SETTINGS_NAME, MODE_PRIVATE);
+                if(preferences.contains(Const.SH_PREFERENCES_SETTINGS_KEY_ALARM_VIBRATION_PATTERN)) {
+                    vibratePattern = Const.ALARM_VIBRATION_PATTERNS[preferences.getInt(Const.SH_PREFERENCES_SETTINGS_KEY_ALARM_VIBRATION_PATTERN, 0)];
+                }
+                else {
+                    vibratePattern = Const.ALARM_VIBRATION_PATTERNS[0];
+                }
+
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                     VibrationEffect effect = VibrationEffect.createWaveform(vibratePattern, 0);
                     MediaPlayerManager.vibrator.vibrate(effect);
@@ -241,6 +273,13 @@ public class AlarmRingActivity extends AppCompatActivity {
             buttonAlarmDismiss.setVisibility(View.VISIBLE);
             buttonAlarmDelay.setVisibility(View.VISIBLE);
         }
+    }
+
+    private int setRandomBackgroundImage(ImageView imageView) {
+        Random random = new Random();
+        int randomImageIndex = random.nextInt(Const.ALARM_DEFAULT_BACKGROUNDS.length);
+        imageView.setImageDrawable(getDrawable(Const.ALARM_DEFAULT_BACKGROUNDS[randomImageIndex]));
+        return Const.ALARM_DEFAULT_BACKGROUNDS[randomImageIndex];
     }
 
     class TimeMonitorTask extends AsyncTask<Void, Calendar, Void> {

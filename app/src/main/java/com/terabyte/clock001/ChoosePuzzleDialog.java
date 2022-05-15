@@ -15,6 +15,13 @@ import androidx.fragment.app.DialogFragment;
 
 public class ChoosePuzzleDialog extends DialogFragment {
     private Alarm alarm;
+
+    private static Alarm alarmForSavingState;
+
+    public ChoosePuzzleDialog() {
+
+    }
+
     public ChoosePuzzleDialog(Alarm alarm) {
         this.alarm = alarm;
     }
@@ -22,6 +29,10 @@ public class ChoosePuzzleDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        if(savedInstanceState!=null) {
+            alarm = alarmForSavingState;
+        }
+
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         // Установить заголовок диалогового окна
         alertDialogBuilder.setMessage(getString(R.string.choose_puzzle_type));
@@ -77,6 +88,12 @@ public class ChoosePuzzleDialog extends DialogFragment {
         // Вернуть экземпляр диалогового окна для показа
         return alertDialogBuilder.create();
 
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        alarmForSavingState = alarm;
+        super.onSaveInstanceState(outState);
     }
 
     private void setUIBehaviourOfTextDescriptions(View inflatedView) {

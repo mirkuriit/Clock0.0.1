@@ -68,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.menuItemTimer:
                         transaction.replace(R.id.frameLayoutForFragments, new TimerFragment());
                         break;
+                    case R.id.menuItemSettings:
+                        transaction.replace(R.id.frameLayoutForFragments, new SettingsFragment());
+                        break;
                 }
                 transaction.commit();
                 return true;

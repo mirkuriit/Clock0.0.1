@@ -9,6 +9,7 @@ import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -33,6 +34,10 @@ public class SolvePuzzleActivity extends AppCompatActivity {
 
         long alarmId = getIntent().getExtras().getLong(Const.INTENT_KEY_ALARM_ID);
         int hardcoreLevel = getIntent().getExtras().getInt(Const.INTENT_KEY_HARDCORE_LEVEL);
+        int randomImageId = getIntent().getExtras().getInt(Const.INTENT_KEY_BACKGROUND_IMAGE_ID);
+
+        ImageView imageSolvePuzzleBackground = findViewById(R.id.imageSolvePuzzleBackground);
+        imageSolvePuzzleBackground.setImageDrawable(getDrawable(randomImageId));
 
         if(hardcoreLevel== 0 | hardcoreLevel==1) {
             editSolvePuzzleAnswer.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_CLASS_NUMBER);

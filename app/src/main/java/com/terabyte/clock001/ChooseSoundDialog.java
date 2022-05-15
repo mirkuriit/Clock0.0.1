@@ -1,12 +1,17 @@
 package com.terabyte.clock001;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -20,12 +25,22 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 
 public class ChooseSoundDialog extends DialogFragment {
     private Alarm alarm;
     private MediaPlayer mediaPlayer;
     private int chosenId;
+
+    private RadioGroup radioGroupAlarmSounds;
+
+    private static Alarm alarmForSavingState;
+
+    public ChooseSoundDialog() {
+
+    }
 
     public ChooseSoundDialog(Alarm alarm) {
         this.alarm = alarm;
@@ -34,6 +49,10 @@ public class ChooseSoundDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+        if(savedInstanceState!=null) {
+            alarm = alarmForSavingState;
+        }
 
         // Объявить и инициализировать экземпляр класса AlertDialog.Builder с передачей контекста конструктору
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
@@ -48,7 +67,7 @@ public class ChooseSoundDialog extends DialogFragment {
         // Установить полученный макет в качестве макета диалогового окна
         alertDialogBuilder.setView(v);
 
-        RadioGroup radioGroupAlarmSounds = v.findViewById(R.id.radioGroupAlarmSounds);
+        radioGroupAlarmSounds = v.findViewById(R.id.radioGroupAlarmSounds);
 
         String defaultUriBeginning = "android.resource://com.terabyte.clock001/";
         if(alarm.soundURIString.equals(defaultUriBeginning+R.raw.egor_track)) {
@@ -123,13 +142,6 @@ public class ChooseSoundDialog extends DialogFragment {
         buttonChooseCustomSound.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                ActivityResultLauncher<String> launcher = registerForActivityResult(new ActivityResultContracts.GetContent(), new ActivityResultCallback<Uri>() {
-//                    @Override
-//                    public void onActivityResult(Uri result) {
-//                        alarm.soundURIString = result.toString();
-//                    }
-//                });
-//                launcher.launch("audio/*");
                 Intent intent= new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setType("audio/*");
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -152,8 +164,25 @@ public class ChooseSoundDialog extends DialogFragment {
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        alarmForSavingState = alarm;
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==RESULT_OK) {
+            alarm.soundURIString = data.getData().toString();
+
+            //если мы вызовем MediaPlayer.create(data.getData()).start(); , то все работает отлично!
+            //но мне то нужно запускать MediaPlayer в другом месте
+
+            RadioButton radioCustomSound = new RadioButton(getContext());
+            radioCustomSound.setText("just custom sound");
+            radioCustomSound.setId(R.id.radioAlarmSoundCustom);
+            radioGroupAlarmSounds.addView(radioCustomSound);
+            radioGroupAlarmSounds.check(R.id.radioAlarmSoundCustom);
+        }
     }
 
     private void playSound(String uriString) {
@@ -163,6 +192,7 @@ public class ChooseSoundDialog extends DialogFragment {
 
         }
         mediaPlayer = MediaPlayer.create(getContext(), Uri.parse(uriString));
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mediaPlayer.setLooping(true);
         mediaPlayer.start();
     }
