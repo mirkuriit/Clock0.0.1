@@ -71,4 +71,7 @@
     <string name="alarm_vibration_pattern_name1">ordinary vibration</string>
     <string name="alarm_vibration_pattern_name2">mono vibration</string>
     <string name="alarm_vibration_pattern_name3">cutting vibration</string>
+    <string name="about_app">About application</string>
+    <string name="about_app_text">The description of our app</string>
+    <string name="timer_settings">Timer settings</string>
 </resources>

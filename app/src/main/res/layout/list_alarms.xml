@@ -10,7 +10,7 @@
 
     <TextView
         android:id="@+id/textAlarmListTime"
-        style="@style/styleHeader1"
+        style="@style/styleDarkGreenHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
@@ -26,17 +26,18 @@
         app:layout_constraintBottom_toBottomOf="@+id/textAlarmListTime"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textAlarmListTime"
-        app:layout_constraintTop_toTopOf="@+id/textAlarmListTime" />
+        app:layout_constraintTop_toTopOf="@+id/textAlarmListTime"
+        />
 
     <TextView
         android:id="@+id/textAlarmListDescription"
-        style="@style/styleDescription1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/textAlarmListTime"
         android:layout_marginHorizontal="10dp"
         android:layout_marginVertical="5dp"
-        android:text="some description of alarm"/>
+        android:text="some description of alarm"
+        style="@style/TextAppearance.AppCompat"/>
 
     <ImageButton
         android:id="@+id/buttonAlarmListExtendParams"
@@ -51,7 +52,7 @@
 
     <TextView
         android:id="@+id/textAlarmListDates"
-        style="@style/styleDescription1"
+        style="@style/TextAppearance.AppCompat"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toStartOf="@+id/buttonAlarmListExtendParams"
@@ -91,49 +92,56 @@
                     android:text="@string/monday_short"
                     android:id="@+id/chipAlarmListMonday"
                     android:singleLine="true"
-                    android:checkable="true"/>
+                    android:checkable="true"
+                    android:backgroundTint="?attr/colorPrimary"/>
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/tuesday_short"
                     android:id="@+id/chipAlarmListTuesday"
                     android:singleLine="true"
-                    android:checkable="true"/>
+                    android:checkable="true"
+                    android:backgroundTint="?attr/colorPrimary"/>
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/wednesday_short"
                     android:id="@+id/chipAlarmListWednesday"
                     android:singleLine="true"
-                    android:checkable="true"/>
+                    android:checkable="true"
+                    android:backgroundTint="?attr/colorPrimary"/>
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/thursday_short"
                     android:id="@+id/chipAlarmListThursday"
                     android:singleLine="true"
-                    android:checkable="true"/>
+                    android:checkable="true"
+                    android:backgroundTint="?attr/colorPrimary"/>
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/friday_short"
                     android:id="@+id/chipAlarmListFriday"
                     android:singleLine="true"
-                    android:checkable="true"/>
+                    android:checkable="true"
+                    android:backgroundTint="?attr/colorPrimary"/>
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/saturday_short"
                     android:id="@+id/chipAlarmListSaturday"
                     android:singleLine="true"
-                    android:checkable="true"/>
+                    android:checkable="true"
+                    android:backgroundTint="?attr/colorPrimary"/>
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/sunday_short"
                     android:id="@+id/chipAlarmListSunday"
                     android:singleLine="true"
-                    android:checkable="true"/>
+                    android:checkable="true"
+                    android:backgroundTint="?attr/colorPrimary"/>
             </LinearLayout>
         </HorizontalScrollView>
 
@@ -143,15 +151,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:backgroundTint="@color/white"
             android:drawableLeft="@drawable/ic_sound"
             android:text="@string/choose_alarm_sound"
-            android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="@+id/checkBoxAlarmListVibration"
             app:layout_constraintEnd_toStartOf="@+id/checkBoxAlarmListVibration"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/checkBoxAlarmListVibration"
-            android:textAllCaps="false"/>
+            style="@style/styleAlarmListButton"
+            />
 
         <CheckBox
             android:id="@+id/checkBoxAlarmListVibration"
@@ -185,9 +192,7 @@
             android:text="@string/choose_puzzle_type"
             android:layout_margin="10dp"
             android:drawableLeft="@drawable/ic_puzzle"
-            android:backgroundTint="@color/white"
-            android:textColor="@color/black"
-            android:textAllCaps="false"
+            style="@style/styleAlarmListButton"
             app:layout_constraintTop_toBottomOf="@id/checkBoxAlarmListPuzzle"
             android:id="@+id/buttonAlarmListChoosePuzzleType"/>
 
@@ -197,12 +202,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:backgroundTint="@color/white"
             android:drawableLeft="@drawable/ic_delete"
             android:text="@string/delete"
-            android:textColor="@color/black"
-            android:textAllCaps="false"
-
+            style="@style/styleAlarmListButton"
+            android:textColor="@color/red"
+            android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@id/buttonAlarmListChoosePuzzleType" />
 
 

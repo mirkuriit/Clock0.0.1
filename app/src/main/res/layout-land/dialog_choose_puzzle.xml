@@ -3,29 +3,34 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:minHeight="100dp">
+
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="200dp"
         android:layout_margin="10dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="10dp">
+
             <RadioGroup
+                android:id="@+id/radioGroupAlarmPuzzles"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/radioGroupAlarmPuzzles"
-                android:animateLayoutChanges="true">
+                android:animateLayoutChanges="true"
+                android:paddingBottom="30dp">
+
                 <RadioButton
                     android:id="@+id/radioFirstAlarmPuzzleDifficulty"
                     style="@style/styleGreenHeader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/first_degree_difficulty"
                     android:drawableRight="@drawable/puzzle_hardcore_level1"
-                    />
+                    android:text="@string/first_degree_difficulty" />
+
                 <TextView
                     android:id="@+id/textFirstAlarmPuzzleDifficulty"
                     style="@style/TextAppearance.AppCompat"
@@ -36,12 +41,13 @@
 
                 <RadioButton
                     android:id="@+id/radioSecondAlarmPuzzleDifficulty"
-                    android:layout_marginTop="15dp"
                     style="@style/styleGreenHeader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/second_degree_difficulty"
-                    android:drawableRight="@drawable/puzzle_hardcore_level2"/>
+                    android:layout_marginTop="15dp"
+                    android:drawableRight="@drawable/puzzle_hardcore_level2"
+                    android:text="@string/second_degree_difficulty" />
+
                 <TextView
                     android:id="@+id/textSecondAlarmPuzzleDifficulty"
                     style="@style/TextAppearance.AppCompat"
@@ -51,13 +57,14 @@
                     android:text="@string/second_degree_difficulty_description" />
 
                 <RadioButton
-                    android:layout_marginTop="15dp"
                     android:id="@+id/radioThirdAlarmPuzzleDifficulty"
                     style="@style/styleGreenHeader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/third_degree_difficulty"
-                    android:drawableRight="@drawable/puzzle_hardcore_level3"/>
+                    android:layout_marginTop="15dp"
+                    android:drawableRight="@drawable/puzzle_hardcore_level3"
+                    android:text="@string/third_degree_difficulty" />
+
                 <TextView
                     android:id="@+id/textThirdAlarmPuzzleDifficulty"
                     style="@style/TextAppearance.AppCompat"
@@ -67,13 +74,14 @@
                     android:text="@string/third_degree_difficulty_description" />
 
                 <RadioButton
-                    android:layout_marginTop="15dp"
                     android:id="@+id/radioFourthAlarmPuzzleDifficulty"
                     style="@style/styleGreenHeader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/fourth_degree_difficulty"
-                    android:drawableRight="@drawable/puzzle_hardcore_level4"/>
+                    android:layout_marginTop="15dp"
+                    android:drawableRight="@drawable/puzzle_hardcore_level4"
+                    android:text="@string/fourth_degree_difficulty" />
+
                 <TextView
                     android:id="@+id/textFourthAlarmPuzzleDifficulty"
                     style="@style/TextAppearance.AppCompat"
