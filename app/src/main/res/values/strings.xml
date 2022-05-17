@@ -46,6 +46,10 @@
     <string name="timer_notification_channel_name">Timer notifications</string>
     <string name="timer_notification_content_title">Timer is running now!</string>
 
+    <string name="stopwatch_notification_channel_description">These notifications will show when stopwatch runs</string>
+    <string name="stopwatch_notification_channel_name">Stopwatch notifications</string>
+    <string name="stopwatch_notification_content_title">Stopwatch is running now!</string>
+
     <string name="choose_alarm_sound">Choose alarm sound</string>
     <string name="choose_custom_sound">Choose custom sound</string>
 
@@ -74,4 +78,6 @@
     <string name="about_app">About application</string>
     <string name="about_app_text">The description of our app</string>
     <string name="timer_settings">Timer settings</string>
+    <string name="stop">stop</string>
+    <string name="interval">interval</string>
 </resources>

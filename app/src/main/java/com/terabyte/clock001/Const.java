@@ -21,6 +21,7 @@ public class Const {
     public static final String INTENT_KEY_IS_DELAYED_ALARM = "intentKeyIsDelayedAlarm";
     public static final String INTENT_KEY_TIMER_LEFT_TIME_MILLS = "intentKeyTimerLeftTimeMills";
     public static final String INTENT_KEY_BACKGROUND_IMAGE_ID = "intentKeyBackgroundImageId";
+    public static final String INTENT_KEY_STOPWATCH_ELAPSED_TIME_MILLS = "intentKeyStopwatchElapsedTimeMills";
 
 
     public static final String ALARM_NOTIFICATION_CHANNEL_ID = "alarmNotificationChannelId";
@@ -28,6 +29,9 @@ public class Const {
 
     public static final String TIMER_NOTIFICATION_CHANNEL_ID ="timerNotificationChannelId";
     public static final int TIMER_NOTIFICATION_ID = 2;
+
+    public static final String STOPWATCH_NOTIFICATION_CHANNEL_ID ="stopwatchNotificationChannelId";
+    public static final int STOPWATCH_NOTIFICATION_ID = 3;
 
     public static final String SH_PREFERENCES_SETTINGS_NAME = "sharedPreferencesSettings";
     public static final String SH_PREFERENCES_SETTINGS_KEY_ALARM_VIBRATION_PATTERN = "shPreferencesKeyAlarmVibrationPattern";

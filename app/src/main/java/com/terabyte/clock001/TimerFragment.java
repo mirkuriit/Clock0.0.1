@@ -170,14 +170,6 @@ public class TimerFragment extends Fragment {
         return result;
     }
 
-    public static boolean getPaused() {
-        return isPaused;
-    }
-
-    public static long getPauseMills() {
-        return pauseMills;
-    }
-
     private void recreateFragment() {
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         TimerFragment timerRunFragment = new TimerFragment();

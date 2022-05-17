@@ -1,64 +1,133 @@
 package com.terabyte.clock001;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link StopwatchFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class StopwatchFragment extends Fragment {
+    private static boolean isPaused;
+    private static long pauseElapsedTime;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public StopwatchFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment StopwatchFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static StopwatchFragment newInstance(String param1, String param2) {
-        StopwatchFragment fragment = new StopwatchFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private Button buttonStart, buttonStop, buttonInterval, buttonResume, buttonCancel;
+    private TextView textTime, textTimeInterval;
+    private RecyclerView recyclerIntervals;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_stopwatch_sleep, container, false);
+
+        if(StopwatchService.isRunning) {
+            view = inflater.inflate(R.layout.fragment_stopwatch_run, container, false);
+            initRunLayout(view);
+            StopwatchService.setTextTime(textTime);
+            textTime.setText(StopwatchService.getTextTimeForUI(StopwatchService.getElapsedTime()));
+
+            buttonInterval.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                }
+            });
+
+            buttonStop.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    isPaused = true;
+                    pauseElapsedTime = StopwatchService.getElapsedTime();
+                    getContext().stopService(new Intent(getContext(), StopwatchService.class));
+                    recreateFragment();
+                }
+            });
+
         }
+        if(isPaused) {
+            view = inflater.inflate(R.layout.fragment_stopwatch_pause, container, false);
+            initPauseLayout(view);
+            textTime.setText(StopwatchService.getTextTimeForUI(pauseElapsedTime));
+            StopwatchService.setTextTime(null);
+
+            buttonResume.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getContext(), StopwatchService.class);
+                    intent.putExtra(Const.INTENT_KEY_STOPWATCH_ELAPSED_TIME_MILLS, pauseElapsedTime);
+                    getContext().startService(intent);
+                    StopwatchService.isRunning = true;
+                    isPaused = false;
+                    recreateFragment();
+                }
+            });
+
+            buttonCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    isPaused = false;
+                    getContext().stopService(new Intent(getContext(), StopwatchService.class));
+                    recreateFragment();
+                }
+            });
+        }
+        if(!StopwatchService.isRunning & !isPaused) {
+            view = inflater.inflate(R.layout.fragment_stopwatch_sleep, container, false);
+            initSleepLayout(view);
+            StopwatchService.setTextTime(null);
+
+            buttonStart.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getContext(), StopwatchService.class);
+                    intent.putExtra(Const.INTENT_KEY_STOPWATCH_ELAPSED_TIME_MILLS, 0);
+                    getContext().startService(intent);
+                    StopwatchService.isRunning = true;
+                    recreateFragment();
+                }
+            });
+        }
+        StopwatchService.setFragmentExists(true);
+        return view;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_stopwatch, container, false);
+    public void onStop() {
+        StopwatchService.setFragmentExists(false);
+        StopwatchService.setTextTime(null);
+        super.onStop();
+    }
+
+    private void initSleepLayout(View view) {
+        buttonStart = view.findViewById(R.id.buttonStopwatchStart);
+    }
+
+    private void initRunLayout(View view) {
+        buttonStop = view.findViewById(R.id.buttonStopwatchStop);
+        buttonInterval = view.findViewById(R.id.buttonStopwatchInterval);
+        textTime = view.findViewById(R.id.textStopwatchTimeRun);
+        textTimeInterval = view.findViewById(R.id.textStopwatchTimeInterval);
+        recyclerIntervals = view.findViewById(R.id.recyclerStopwatchIntervals);
+    }
+
+    private void initPauseLayout(View view) {
+        buttonResume = view.findViewById(R.id.buttonStopwatchResume);
+        buttonCancel = view.findViewById(R.id.buttonStopwatchCancel);
+        textTime = view.findViewById(R.id.textStopwatchTimePause);
+        textTimeInterval = view.findViewById(R.id.textStopwatchTimeInterval);
+        recyclerIntervals = view.findViewById(R.id.recyclerStopwatchIntervals);
+    }
+
+    private void recreateFragment() {
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        StopwatchFragment stopwatchFragment = new StopwatchFragment();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frameLayoutForFragments, stopwatchFragment).commit();
     }
 }

@@ -64,9 +64,6 @@ public class TimerService extends Service {
             }.start();
 
             startForeground(Const.TIMER_NOTIFICATION_ID, createNotification(timeLeft));
-
-
-
         }
         return START_STICKY;
     }
@@ -90,6 +87,7 @@ public class TimerService extends Service {
                 .setSmallIcon(R.drawable.ic_timer)
                 .setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0, new Intent(getApplicationContext(), MainActivity.class), 0))
                 .setContentText(String.format("%02d:%02d:%02d", hours, minutes, seconds))
+                .setSilent(true)
                 .build();
 
         return notification;
