@@ -7,9 +7,13 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.IBinder;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.widget.TextView;
 
 import androidx.core.app.NotificationCompat;
@@ -19,8 +23,11 @@ public class TimerService extends Service {
     public static boolean isRunning;
     private static long timeLeft;
     private static boolean isFragmentExists;
+    private static TimerFragment timerFragment;
     private static TextView textTimer;
-
+    public static boolean isRinging;
+    public static MediaPlayer mediaPlayer;
+    public static Vibrator vibrator;
     CountDownTimer mCountDownTimer;
 
     public TimerService() {
@@ -39,6 +46,7 @@ public class TimerService extends Service {
         }
         else {
             isRunning = true;
+            isRinging = false;
 
             timeLeft = intent.getExtras().getLong(Const.INTENT_KEY_TIMER_LEFT_TIME_MILLS);
 
@@ -56,10 +64,31 @@ public class TimerService extends Service {
 
                 @Override
                 public void onFinish() {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        stopForeground(0);
+                    isRinging = true;
+                    isRunning = false;
+
+                    SharedPreferences preferences = getSharedPreferences(Const.SH_PREFERENCES_SETTINGS_NAME, MODE_PRIVATE);
+                    mediaPlayer = MediaPlayer.create(getApplicationContext(), preferences.getInt(Const.SH_PREFERENCES_SETTINGS_KEY_TIMER_SOUND_RAW_RESOURCE, R.raw.beep_beep));
+                    mediaPlayer.setLooping(true);
+                    mediaPlayer.start();
+
+                    if(preferences.getBoolean(Const.SH_PREFERENCES_SETTINGS_KEY_TIMER_VIBRATION, false)) {
+                        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+                        if(vibrator.hasVibrator()) {
+                            long[] vibratePattern = {0,1500, 1000, 1500};
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                                VibrationEffect effect = VibrationEffect.createWaveform(vibratePattern, 0);
+                                vibrator.vibrate(effect);
+                            }
+                            else {
+                                vibrator.vibrate(vibratePattern, 0);
+                            }
+                        }
                     }
-                    stopSelf();
+
+                    if(isFragmentExists) {
+                        timerFragment.recreateFragment();
+                    }
                 }
             }.start();
 
@@ -70,8 +99,17 @@ public class TimerService extends Service {
 
     @Override
     public void onDestroy() {
-;        isRunning = false;
+        isRunning = false;
         mCountDownTimer.cancel();
+        if(mediaPlayer!=null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+        if(vibrator!=null) {
+            vibrator.cancel();
+            vibrator = null;
+        }
         super.onDestroy();
     }
 
@@ -115,6 +153,10 @@ public class TimerService extends Service {
 
     public static void setFragmentExists(boolean isFragmentExists) {
         TimerService.isFragmentExists = isFragmentExists;
+    }
+
+    public static void setTimerFragment(TimerFragment timerFragment) {
+        TimerService.timerFragment = timerFragment;
     }
 
     public static void setTextTimer(TextView textTimer) {

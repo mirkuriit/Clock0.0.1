@@ -9,9 +9,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
@@ -20,6 +23,27 @@ public class StopwatchService extends Service {
     public static boolean isRunning;
     private static boolean isFragmentExists;
     private static TextView textTime;
+
+    public static final int TIME_INTERVAL = 100;
+
+    private Handler.Callback handlerCallback = new Handler.Callback() {
+        @Override
+        public boolean handleMessage(@NonNull Message message) {
+            if(isRunning) {
+                elapsedTime+= TIME_INTERVAL;
+                if(elapsedTime%1000==0) {
+                    NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
+                    notificationManagerCompat.notify(Const.STOPWATCH_NOTIFICATION_ID, createNotification(elapsedTime));
+                }
+                if(isFragmentExists & textTime!=null) {
+                    textTime.setText(getTextTimeForUI(elapsedTime));
+                }
+                handler.sendMessageDelayed(handler.obtainMessage(0), TIME_INTERVAL);
+            }
+            return false;
+        }
+    };
+    private Handler handler;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -32,34 +56,8 @@ public class StopwatchService extends Service {
         isRunning = true;
         elapsedTime = intent.getExtras().getLong(Const.INTENT_KEY_STOPWATCH_ELAPSED_TIME_MILLS);
 
-        class StopwatchTask extends AsyncTask<Void, Void, Void> {
-            @Override
-            protected Void doInBackground(Void ...voids) {
-                while(isRunning) {
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    elapsedTime+=10;
-                    publishProgress();
-                }
-
-                return null;
-            }
-
-            @Override
-            protected void onProgressUpdate(Void... values) {
-                NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
-                notificationManagerCompat.notify(Const.STOPWATCH_NOTIFICATION_ID, createNotification(elapsedTime));
-                if(isFragmentExists & textTime!=null) {
-                    textTime.setText(getTextTimeForUI(elapsedTime));
-                }
-            }
-        }
-
-        StopwatchTask stopwatchTask = new StopwatchTask();
-        stopwatchTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        handler = new Handler(handlerCallback);
+        handler.sendMessageDelayed(handler.obtainMessage(0), TIME_INTERVAL);
 
         startForeground(Const.STOPWATCH_NOTIFICATION_ID, createNotification(elapsedTime));
 

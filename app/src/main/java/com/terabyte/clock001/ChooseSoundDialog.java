@@ -1,38 +1,23 @@
 package com.terabyte.clock001;
 
-import static android.app.Activity.RESULT_OK;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ContentResolver;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
 
 public class ChooseSoundDialog extends DialogFragment {
     private Alarm alarm;
-    private MediaPlayer mediaPlayer;
-    private int chosenId;
+    private static MediaPlayer mediaPlayer;
+    private static int chosenId;
 
     private RadioGroup radioGroupAlarmSounds;
 
@@ -70,8 +55,14 @@ public class ChooseSoundDialog extends DialogFragment {
         radioGroupAlarmSounds = v.findViewById(R.id.radioGroupAlarmSounds);
 
         String defaultUriBeginning = "android.resource://com.terabyte.clock001/";
-        if(alarm.soundURIString.equals(defaultUriBeginning+R.raw.egor_track)) {
-            radioGroupAlarmSounds.check(R.id.radioAlarmSoundEgorTrack);
+        if(alarm.soundURIString.equals(defaultUriBeginning+R.raw.egor_track1)) {
+            radioGroupAlarmSounds.check(R.id.radioAlarmSoundEgorTrack1);
+        }
+        if(alarm.soundURIString.equals(defaultUriBeginning+R.raw.egor_track2)) {
+            radioGroupAlarmSounds.check(R.id.radioAlarmSoundEgorTrack2);
+        }
+        if(alarm.soundURIString.equals(defaultUriBeginning+R.raw.egor_track3)) {
+            radioGroupAlarmSounds.check(R.id.radioAlarmSoundEgorTrack3);
         }
         if(alarm.soundURIString.equals(defaultUriBeginning+R.raw.beep_beep)) {
             radioGroupAlarmSounds.check(R.id.radioAlarmSoundBeepBeep);
@@ -89,10 +80,29 @@ public class ChooseSoundDialog extends DialogFragment {
             radioGroupAlarmSounds.check(R.id.radioAlarmSoundWalkInForest);
         }
 
+        if (chosenId!=0) {
+            RadioButton radioPlayingSound = v.findViewById(radioGroupAlarmSounds.getCheckedRadioButtonId());
+            radioPlayingSound.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_alarm_sound_play, 0);
+            radioPlayingSound.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(chosenId==view.getId()) {
+                        mediaPlayer.stop();
+                        radioPlayingSound.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                        chosenId = 0;
+                    }
+                    else {
+                        playSound(alarm.soundURIString);
+                        radioPlayingSound.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_alarm_sound_play, 0);
+                        chosenId = view.getId();
+                    }
+                }
+            });
+        }
 
-        int[] radioIds = {R.id.radioAlarmSoundEgorTrack, R.id.radioAlarmSoundBeepBeep, R.id.radioAlarmSoundHappyBells, R.id.radioAlarmSoundOxygen, R.id.radioAlarmSoundPlatinum,
+        int[] radioIds = {R.id.radioAlarmSoundEgorTrack1, R.id.radioAlarmSoundEgorTrack2, R.id.radioAlarmSoundEgorTrack3, R.id.radioAlarmSoundBeepBeep, R.id.radioAlarmSoundHappyBells, R.id.radioAlarmSoundOxygen, R.id.radioAlarmSoundPlatinum,
         R.id.radioAlarmSoundSilverSmoke, R.id.radioAlarmSoundWalkInForest};
-        int[] rawIds = {R.raw.egor_track, R.raw.beep_beep, R.raw.happy_bells, R.raw.oxygen, R.raw.platinum, R.raw.silver_smoke, R.raw.walk_in_forest};
+        int[] rawIds = {R.raw.egor_track1, R.raw.egor_track2, R.raw.egor_track3, R.raw.beep_beep, R.raw.happy_bells, R.raw.oxygen, R.raw.platinum, R.raw.silver_smoke, R.raw.walk_in_forest};
 
         radioGroupAlarmSounds.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -138,16 +148,6 @@ public class ChooseSoundDialog extends DialogFragment {
             }
         });
 
-        Button buttonChooseCustomSound = v.findViewById(R.id.buttonChooseCustomSound);
-        buttonChooseCustomSound.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent= new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("audio/*");
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                startActivityForResult(intent, 0);
-            }
-        });
         // Устанавливает кнопку подтверждения и обработчик события клик для кнопки
         alertDialogBuilder.setPositiveButton(getString(R.string.apply), new DialogInterface.OnClickListener() {
             @Override
@@ -156,6 +156,8 @@ public class ChooseSoundDialog extends DialogFragment {
                     mediaPlayer.stop();
                     mediaPlayer.release();
                 }
+                mediaPlayer = null;
+                chosenId = 0;
                 dismiss();
             }
         });
@@ -169,22 +171,6 @@ public class ChooseSoundDialog extends DialogFragment {
         super.onSaveInstanceState(outState);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(resultCode==RESULT_OK) {
-            alarm.soundURIString = data.getData().toString();
-
-            //если мы вызовем MediaPlayer.create(data.getData()).start(); , то все работает отлично!
-            //но мне то нужно запускать MediaPlayer в другом месте
-
-            RadioButton radioCustomSound = new RadioButton(getContext());
-            radioCustomSound.setText("just custom sound");
-            radioCustomSound.setId(R.id.radioAlarmSoundCustom);
-            radioGroupAlarmSounds.addView(radioCustomSound);
-            radioGroupAlarmSounds.check(R.id.radioAlarmSoundCustom);
-        }
-    }
-
     private void playSound(String uriString) {
         if(mediaPlayer!=null) {
             mediaPlayer.stop();
@@ -192,7 +178,6 @@ public class ChooseSoundDialog extends DialogFragment {
 
         }
         mediaPlayer = MediaPlayer.create(getContext(), Uri.parse(uriString));
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mediaPlayer.setLooping(true);
         mediaPlayer.start();
     }

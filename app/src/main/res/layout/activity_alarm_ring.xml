@@ -46,46 +46,23 @@
         app:layout_constraintTop_toBottomOf="@+id/textAlarmRingHeader"
         android:text="there is some description of our alarm"/>
 
-    <com.terabyte.clock001.SwipeButton
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        app:layout_constraintBottom_toTopOf="@+id/buttonAlarmSolvePuzzle"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <Button
         android:id="@+id/buttonAlarmSolvePuzzle"
         android:layout_width="wrap_content"
+        style="@style/styleSolvePuzzleButton"
         android:layout_height="wrap_content"
         android:text="@string/solve_puzzle"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintBottom_toTopOf="@+id/buttonDelayDismiss"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
+    <com.terabyte.clock001.DelayDismissButton
+        android:id="@+id/buttonDelayDismiss"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginVertical="20dp"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-        <Button
-            android:id="@+id/buttonAlarmDelay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/delay" />
-
-        <Button
-            android:id="@+id/buttonAlarmDismiss"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/dismiss" />
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

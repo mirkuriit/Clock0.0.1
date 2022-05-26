@@ -1,13 +1,8 @@
 package com.terabyte.clock001;
 
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-
-import java.net.URI;
 
 /**
  * It's simple entity class for Room Database.
@@ -36,7 +31,7 @@ public class Alarm {
     }
 
     public static String getDefaultSoundUriString() {
-        return "android.resource://com.terabyte.clock001/"+R.raw.egor_track;
+        return "android.resource://com.terabyte.clock001/"+R.raw.egor_track1;
     }
 
 

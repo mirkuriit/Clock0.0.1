@@ -7,10 +7,30 @@
     android:layout_height="match_parent"
     tools:context=".AlarmFragment">
 
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/alarm_fragment_header_background"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/textAlarmFragmentHeader"
+            style="@style/styleGreenHeader"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:text="alarms" />
+    </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerAlarms"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/buttonAddAlarm"

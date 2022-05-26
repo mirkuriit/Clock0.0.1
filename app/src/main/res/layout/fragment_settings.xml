@@ -7,8 +7,8 @@
     tools:context=".SettingsFragment">
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#3CD1D1D1">
+        android:layout_height="match_parent">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -16,9 +16,10 @@
             android:paddingBottom="10dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                style="@style/styleSettingsFragmentItem"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/styleSettingsFragmentItem">
+                android:layout_height="wrap_content">
+
                 <TextView
                     android:id="@+id/textAlarmSettings"
                     style="@style/styleGreenHeader"
@@ -29,16 +30,17 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
                 <TextView
                     android:id="@+id/textAlarmVibrationPattern"
+                    style="@style/TextAppearance.AppCompat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
                     android:text="@string/alarm_vibration_pattern"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textAlarmSettings"
-                    android:layout_margin="15dp"
-                    style="@style/TextAppearance.AppCompat"
-                    />
+                    app:layout_constraintTop_toBottomOf="@+id/textAlarmSettings" />
+
                 <Spinner
                     android:id="@+id/spinnerAlarmVibrationPattern"
                     android:layout_width="0dp"
@@ -50,11 +52,12 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                style="@style/styleSettingsFragmentItem"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/styleSettingsFragmentItem">
+                android:layout_height="wrap_content">
 
                 <TextView
+                    android:id="@+id/textTimerSettingsHeader"
                     style="@style/styleGreenHeader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -62,23 +65,44 @@
                     android:text="@string/timer_settings"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:layout_editor_absoluteX="15dp" />
+
+                <Button
+                    android:id="@+id/buttonTimerSettingsChooseSound"
+                    style="@style/styleAlarmListButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:drawableLeft="@drawable/ic_sound"
+                    android:text="@string/choose_timer_ringtone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textTimerSettingsHeader" />
+
+                <Switch
+                    android:id="@+id/switchTimerSettingsVibration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:text="@string/timer_vibration"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/buttonTimerSettingsChooseSound" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                style="@style/styleSettingsFragmentItem"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/styleSettingsFragmentItem">
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/textAboutAppHeader"
+                    style="@style/styleGreenHeader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="15dp"
                     android:text="@string/about_app"
-                    style="@style/styleGreenHeader"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
                 <TextView
                     android:id="@+id/textAboutApp"
                     style="@style/TextAppearance.AppCompat"
@@ -86,9 +110,17 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="15dp"
                     android:text="@string/about_app_text"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textAboutAppHeader"
                     tools:layout_editor_absoluteX="15dp" />
+
+                <VideoView
+                    android:id="@+id/videoAboutApp"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_margin="15dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textAboutApp" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 

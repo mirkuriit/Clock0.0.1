@@ -16,17 +16,22 @@
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/Clock002/app/src/main/res/layout/fragment_alarm.xml" value="0.35104166666666664" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/Clock002/app/src/main/res/layout/fragment_alarm_no_alarms.xml" value="0.35104166666666664" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/Clock002/app/src/main/res/layout/list_alarms.xml" value="0.35104166666666664" />
+        <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/drawable-v24/delay_dismiss_button_background.xml" value="0.36354166666666665" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/drawable-v24/ic_stopwatch.xml" value="0.3828125" />
+        <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/drawable/alarm_fragment_header_background.xml" value="0.3828125" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/drawable/alarm_list_button_background.xml" value="0.3546875" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/drawable/alarm_list_delete_background.xml" value="0.3546875" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/drawable/ic_dropdown_arrow.xml" value="0.3828125" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/drawable/ic_first_difficutly.xml" value="0.3828125" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/drawable/ic_puzzle.xml" value="0.3614583333333333" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/drawable/ic_sound.xml" value="0.3828125" />
+        <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/drawable/ic_timer_ring.xml" value="0.32708333333333334" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/drawable/list_alarm_background.xml" value="0.3671875" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/drawable/settings_item_background.xml" value="0.3546875" />
+        <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/drawable/solve_puzzle_button_background.xml" value="0.36354166666666665" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/drawable/swipe_button.xml" value="0.3828125" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/drawable/swipe_button_background.xml" value="0.1" />
+        <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/drawable/swipe_button_foreground.xml" value="0.36354166666666665" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/layout-land/dialog_choose_puzzle.xml" value="0.33" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/layout-land/fragment_stopwatch_pause.xml" value="0.33" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/layout-land/fragment_timer_sleep.xml" value="0.5" />
@@ -36,6 +41,7 @@
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/layout/activity_solve_puzzle.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/layout/dialog_choose_puzzle.xml" value="0.35104166666666664" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/layout/dialog_choose_sound.xml" value="0.3046875" />
+        <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/layout/dialog_choose_timer_sound.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/layout/fragment_alarm.xml" value="0.35104166666666664" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/layout/fragment_alarm_no_alarms.xml" value="0.3078125" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/layout/fragment_settings.xml" value="0.36666666666666664" />
@@ -43,10 +49,12 @@
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/layout/fragment_stopwatch_run.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/layout/fragment_stopwatch_sleep.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/layout/fragment_timer_pause.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/layout/fragment_timer_ring.xml" value="0.3203125" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/layout/fragment_timer_run.xml" value="0.35104166666666664" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/layout/fragment_timer_sleep.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/layout/list_alarms.xml" value="0.33" />
         <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/menu/menu_bottom_navigation.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/holod/AndroidStudioProjects/SamsungProject data/ClockInGit/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.3104166666666667" />
       </map>
     </option>
   </component>

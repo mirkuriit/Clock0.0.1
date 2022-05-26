@@ -4,7 +4,7 @@
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_200</item>
         <item name="colorPrimaryVariant">@color/white</item>
-        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorOnPrimary">#323232</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
         <item name="colorSecondaryVariant">@color/dark_green</item>
@@ -14,5 +14,6 @@
         <!-- Customize your theme here. -->
         <item name="alarmBackgroundColor1">@color/dark_purple</item>
         <item name="alarmBackgroundColor2">@color/dark_red</item>
+        <item name="colorShadow">@color/shadow_dark_theme</item>
     </style>
 </resources>

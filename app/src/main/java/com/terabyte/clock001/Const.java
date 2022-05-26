@@ -35,6 +35,8 @@ public class Const {
 
     public static final String SH_PREFERENCES_SETTINGS_NAME = "sharedPreferencesSettings";
     public static final String SH_PREFERENCES_SETTINGS_KEY_ALARM_VIBRATION_PATTERN = "shPreferencesKeyAlarmVibrationPattern";
+    public static final String SH_PREFERENCES_SETTINGS_KEY_TIMER_SOUND_RAW_RESOURCE = "shPreferencesKeyTimerSoundRawResource";
+    public static final String SH_PREFERENCES_SETTINGS_KEY_TIMER_VIBRATION = "shPreferencesKeyTimerVibration";
 
     public static final long[][] ALARM_VIBRATION_PATTERNS = {{0,1500, 1000, 1500}, {0, 1000}, {0, 500, 500, 500, 500, 500, 1000, 1000}};
 

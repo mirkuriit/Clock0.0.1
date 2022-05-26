@@ -35,4 +35,10 @@
         <item name="android:textColor">?attr/colorOnSecondary</item>
     </style>
 
+    <style name="styleSolvePuzzleButton" parent="TextAppearance.AppCompat.Widget.Button.Colored">
+        <item name="textAllCaps">false</item>
+        <item name="android:background">@drawable/solve_puzzle_button_background</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
 </resources>

@@ -24,7 +24,8 @@ import java.util.Random;
 public class AlarmRingActivity extends AppCompatActivity {
     TimeMonitorTask timeMonitorTask;
     TextView textAlarmRingTime, textAlarmRingDescription;
-    Button buttonAlarmSolvePuzzle, buttonAlarmDelay, buttonAlarmDismiss;
+    Button buttonAlarmSolvePuzzle;
+    DelayDismissButton delayDismissButton;
     int backgroundImageId;
 
     @Override
@@ -84,21 +85,20 @@ public class AlarmRingActivity extends AppCompatActivity {
                 });
             }
             else {
-                buttonAlarmDismiss.setOnClickListener(new View.OnClickListener() {
+                delayDismissButton.setDelayDismissListener(new DelayDismissListener() {
                     @Override
-                    public void onClick(View view) {
-                        stopMediaPlayer(alarm);
-                        stopVibration(alarm);
-                        finish();
-                    }
-                });
-                buttonAlarmDelay.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
+                    public void onSwipeDelay() {
                         stopMediaPlayer(alarm);
                         stopVibration(alarm);
                         //here we launch alarmWorker to five minutes +
                         AlarmManagerLauncher.startTask(getApplicationContext(), alarm.id);
+                        finish();
+                    }
+
+                    @Override
+                    public void onSwipeDismiss() {
+                        stopMediaPlayer(alarm);
+                        stopVibration(alarm);
                         finish();
                     }
                 });
@@ -150,21 +150,20 @@ public class AlarmRingActivity extends AppCompatActivity {
 
                     }
                     else {
-                        buttonAlarmDismiss.setOnClickListener(new View.OnClickListener() {
+                        delayDismissButton.setDelayDismissListener(new DelayDismissListener() {
                             @Override
-                            public void onClick(View view) {
-                                stopMediaPlayer(alarm);
-                                stopVibration(alarm);
-                                finish();
-                            }
-                        });
-                        buttonAlarmDelay.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
+                            public void onSwipeDelay() {
                                 stopMediaPlayer(alarm);
                                 stopVibration(alarm);
                                 //here we launch alarmWorker to five minutes +
                                 AlarmManagerLauncher.startTask(getApplicationContext(), alarm.id);
+                                finish();
+                            }
+
+                            @Override
+                            public void onSwipeDismiss() {
+                                stopMediaPlayer(alarm);
+                                stopVibration(alarm);
                                 finish();
                             }
                         });
@@ -194,8 +193,7 @@ public class AlarmRingActivity extends AppCompatActivity {
         textAlarmRingTime = findViewById(R.id.textAlarmRingTime);
         textAlarmRingDescription = findViewById(R.id.textAlarmRingDescription);
         buttonAlarmSolvePuzzle = findViewById(R.id.buttonAlarmSolvePuzzle);
-        buttonAlarmDelay = findViewById(R.id.buttonAlarmDelay);
-        buttonAlarmDismiss = findViewById(R.id.buttonAlarmDismiss);
+        delayDismissButton = findViewById(R.id.buttonDelayDismiss);
     }
 
     private void initTimeMonitorTask(TextView textAlarmRingTime) {
@@ -265,13 +263,11 @@ public class AlarmRingActivity extends AppCompatActivity {
     private void setButtonsVisibilityByIsPuzzle(boolean isPuzzle) {
         if(isPuzzle) {
             buttonAlarmSolvePuzzle.setVisibility(View.VISIBLE);
-            buttonAlarmDismiss.setVisibility(View.GONE);
-            buttonAlarmDelay.setVisibility(View.GONE);
+            delayDismissButton.setVisibility(View.GONE);
         }
         else {
             buttonAlarmSolvePuzzle.setVisibility(View.GONE);
-            buttonAlarmDismiss.setVisibility(View.VISIBLE);
-            buttonAlarmDelay.setVisibility(View.VISIBLE);
+            delayDismissButton.setVisibility(View.VISIBLE);
         }
     }
 

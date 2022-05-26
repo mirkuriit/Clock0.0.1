@@ -15,5 +15,6 @@
 
         <item name="alarmBackgroundColor1">@color/light_blue</item>
         <item name="alarmBackgroundColor2">@color/light_yellow</item>
+        <item name="colorShadow">@color/shadow_light_theme</item>
     </style>
 </resources>

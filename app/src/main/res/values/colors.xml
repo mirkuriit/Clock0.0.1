@@ -14,4 +14,6 @@
     <color name="light_yellow">#FFF6DC</color>
     <color name="dark_purple">#5D6177</color>
     <color name="dark_red">#473034</color>
+    <color name="shadow_light_theme">#E4E4E4</color>
+    <color name="shadow_dark_theme">#131313</color>
 </resources>

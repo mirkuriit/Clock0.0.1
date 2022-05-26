@@ -12,7 +12,12 @@ import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.Interpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
@@ -26,7 +31,7 @@ public class TimerFragment extends Fragment {
     private static boolean isPaused;
     private static long pauseMills;
 
-    private Button buttonTimerStart, buttonTimerPause, buttonTimerResume, buttonTimerCancel;
+    private Button buttonTimerStart, buttonTimerPause, buttonTimerResume, buttonTimerCancel, buttonTimerStopRing;
     private TextView textTimerRun, textTimerPause;
 
     NumberPicker numberPickerHours;
@@ -98,25 +103,64 @@ public class TimerFragment extends Fragment {
             });
         }
 
-        if(!TimerService.isRunning & !isPaused) {
+        if(!TimerService.isRunning & !isPaused & !TimerService.isRinging) {
             //timer in sleep state
             view = inflater.inflate(R.layout.fragment_timer_sleep, container, false);
             initializationModeSleep(view);
             buttonTimerStart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    long startTime = getTimeLeftMillisFromNumberPicker(numberPickerHours.getValue(), numberPickerMinutes.getValue(), numberPickerSeconds.getValue());
-                    Intent intent = new Intent(getContext(), TimerService.class);
-                    intent.putExtra(Const.INTENT_KEY_TIMER_LEFT_TIME_MILLS, startTime);
-                    getContext().startService(intent);
-                    TimerService.isRunning = true;
-                    recreateFragment();
+                    if(getTimeLeftMillisFromNumberPicker(numberPickerHours.getValue(), numberPickerMinutes.getValue(), numberPickerSeconds.getValue())!=0) {
+                        long startTime = getTimeLeftMillisFromNumberPicker(numberPickerHours.getValue(), numberPickerMinutes.getValue(), numberPickerSeconds.getValue());
+                        Intent intent = new Intent(getContext(), TimerService.class);
+                        intent.putExtra(Const.INTENT_KEY_TIMER_LEFT_TIME_MILLS, startTime);
+                        getContext().startService(intent);
+                        TimerService.isRunning = true;
+                        recreateFragment();
+                    }
                 }
             });
             TimerService.setTextTimer(null);
         }
 
+        if(TimerService.isRinging) {
+            view = inflater.inflate(R.layout.fragment_timer_ring, container, false);
+
+            ImageView imageTimerRing = view.findViewById(R.id.imageTimerRing);
+            class MyAnimationInterpolator implements Interpolator {
+                @Override
+                public float getInterpolation(float v) {
+                    return v*=-1;
+                }
+            }
+
+            Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.timer_image_rotate);
+            //animation.setInterpolator(new MyAnimationInterpolator());
+            imageTimerRing.startAnimation(animation);
+
+            buttonTimerStopRing = view.findViewById(R.id.buttonTimerStopRing);
+            buttonTimerStopRing.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    TimerService.isRinging = false;
+                    TimerService.mediaPlayer.stop();
+                    TimerService.mediaPlayer.release();
+                    TimerService.mediaPlayer = null;
+                    TimerService.isRinging = false;
+
+                    if(TimerService.vibrator!=null) {
+                        TimerService.vibrator.cancel();
+                        TimerService.vibrator = null;
+                    }
+
+                    getContext().stopService(new Intent(getContext(), TimerService.class));
+                    recreateFragment();
+                }
+            });
+        }
+
         TimerService.setFragmentExists(true);
+        TimerService.setTimerFragment(this);
         return view;
     }
 
@@ -125,6 +169,7 @@ public class TimerFragment extends Fragment {
     @Override
     public void onStop() {
         TimerService.setFragmentExists(false);
+        TimerService.setTimerFragment(null);
         TimerService.setTextTimer(null);
         super.onStop();
     }
@@ -170,10 +215,12 @@ public class TimerFragment extends Fragment {
         return result;
     }
 
-    private void recreateFragment() {
+    public void recreateFragment() {
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         TimerFragment timerRunFragment = new TimerFragment();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frameLayoutForFragments, timerRunFragment).commit();
     }
+
+
 }

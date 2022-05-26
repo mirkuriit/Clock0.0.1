@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="00:00:00"
-        android:textColor="@color/black"
+        android:textColor="?attr/colorOnSecondary"
         android:textSize="45dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -17,6 +17,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
+        style="@style/styleAlarmListButton"
         android:id="@+id/buttonTimerResume"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -27,10 +28,11 @@
         android:text="@string/resume" />
 
     <Button
+        style="@style/styleAlarmListButton"
+        android:textColor="@color/red"
         android:id="@+id/buttonTimerCancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/black"
         android:text="@string/cancel"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

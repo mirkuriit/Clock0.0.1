@@ -2,4 +2,5 @@
 <resources>
     <attr name="alarmBackgroundColor1" format="color"/>
     <attr name="alarmBackgroundColor2" format="color"/>
+    <attr name="colorShadow" format="color"/>
 </resources>

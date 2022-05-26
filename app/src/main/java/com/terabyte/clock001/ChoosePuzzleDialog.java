@@ -68,6 +68,7 @@ public class ChoosePuzzleDialog extends DialogFragment {
                     }
                     else {
                         view.findViewById(textId).setVisibility(View.GONE);
+
                     }
                 }
 

@@ -46,14 +46,14 @@
         android:textColor="@color/red"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_margin="30dp"/>
+        android:layout_margin="20dp"/>
 
     <Button
         android:id="@+id/buttonStopwatchInterval"
         style="@style/styleAlarmListButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="30dp"
+        android:layout_margin="20dp"
 
         android:text="@string/interval"
         app:layout_constraintBottom_toBottomOf="parent"

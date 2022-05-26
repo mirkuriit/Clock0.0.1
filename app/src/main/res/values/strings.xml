@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Clock0.0.1</string>
+    <string name="app_name">Clock</string>
     <string name="bottom_nav_title_timer">Timer</string>
     <string name="bottom_nav_title_stopwatch">Stopwatch</string>
     <string name="bottom_nav_title_alarm">Alarm</string>
@@ -54,7 +54,9 @@
     <string name="choose_custom_sound">Choose custom sound</string>
 
     <string name="alarm_sound_beep_beep">Beep-beep</string>
-    <string name="alarm_sound_egor_track">Egor track</string>
+    <string name="alarm_sound_egor_track1">Egor track1</string>
+    <string name="alarm_sound_egor_track2">Egor track2</string>
+    <string name="alarm_sound_egor_track3">Egor track3</string>
     <string name="alarm_sound_happy_bells">Happy bells</string>
     <string name="alarm_sound_oxygen">Oxygen</string>
     <string name="alarm_sound_platinum">Platinum</string>
@@ -80,4 +82,11 @@
     <string name="timer_settings">Timer settings</string>
     <string name="stop">stop</string>
     <string name="interval">interval</string>
+    <string name="time_is_up">Time is up!</string>
+    <string name="choose_timer_ringtone">choose timer ringtone</string>
+    <string name="timer_vibration">timer vibration</string>
+    <string name="timer_sound_time_up">Time up</string>
+    <string name="mavrodi_congratulation">Mavrodi\'s congratulation</string>
+    <string name="timer_sound_flooding_balls">Flooding balls</string>
+    <string name="timer_sound_glass_and_water">Glass and water</string>
 </resources>
